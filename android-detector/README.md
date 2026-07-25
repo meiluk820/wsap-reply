@@ -50,16 +50,18 @@ permanent failures (a 4xx that isn't 408/429 — wrong URL, wrong secret) are no
 Not "business hours" — the inverse. Forwarding runs when nobody is free to answer:
 
 - outside the clinic's opening hours;
-- all day on days the clinic is closed;
 - during the **peak windows** inside opening hours, when the team is with patients.
+
+The same schedule applies every day of the week — the booking line is staffed seven days,
+Sundays included, so there is no day-of-week setting to configure.
 
 During the calm stretches of the working day it stays quiet on purpose: staff can see those
 messages themselves, and a bot replying over someone who is sitting right there is worse than a
 slightly slower human.
 
-Configured as opening time, closing time, open days, and a list of peak windows. The settings
+Configured as opening time, closing time, and a list of peak windows. The settings
 screen previews the resulting active and quiet windows, so a mistyped window is obvious before it
-costs a day of coverage. Defaults are the clinic's real schedule — open 09:00–21:00 Mon–Sat, peaks
+costs a day of coverage. Defaults are the clinic's real schedule — open 09:00–21:00 every day, peaks
 `08:00-09:30`, `12:45-14:15`, `17:00-18:30`, `20:00-22:00` — which works out to active
 00:00–09:30, 12:45–14:15, 17:00–18:30 and 20:00–24:00.
 

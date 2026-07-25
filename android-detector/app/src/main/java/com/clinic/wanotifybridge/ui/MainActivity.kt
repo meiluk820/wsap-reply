@@ -53,7 +53,6 @@ import com.clinic.wanotifybridge.service.BridgeForegroundService
 import com.clinic.wanotifybridge.util.ActiveSchedule
 import com.clinic.wanotifybridge.util.FailureLog
 import com.clinic.wanotifybridge.util.TimeWindow
-import java.time.DayOfWeek
 
 class MainActivity : ComponentActivity() {
 
@@ -101,7 +100,6 @@ private fun SettingsScreen() {
     var scheduleEnabled by remember { mutableStateOf(settings.scheduleEnabled) }
     var openText by remember { mutableStateOf(TimeWindow.format(settings.openMinute)) }
     var closeText by remember { mutableStateOf(TimeWindow.format(settings.closeMinute)) }
-    var days by remember { mutableStateOf(settings.openDays) }
     var peaksText by remember { mutableStateOf(settings.peakWindowsText) }
     var allow by remember { mutableStateOf(settings.allowList.joinToString("\n")) }
     var block by remember { mutableStateOf(settings.blockList.joinToString("\n")) }
@@ -190,9 +188,9 @@ private fun SettingsScreen() {
                 onChange = { scheduleEnabled = it },
             )
             Text(
-                "Forwarding runs when nobody is free to answer: outside opening hours, all " +
-                    "day on closed days, and during the peak windows below. Switch the " +
-                    "schedule off to forward around the clock.",
+                "Forwarding runs when nobody is free to answer: outside opening hours, and " +
+                    "during the peak windows below. The same schedule applies every day of " +
+                    "the week. Switch the schedule off to forward around the clock.",
                 style = MaterialTheme.typography.bodySmall,
             )
             if (scheduleEnabled) {
@@ -212,8 +210,6 @@ private fun SettingsScreen() {
                         modifier = Modifier.weight(1f),
                     )
                 }
-                Text("Days the clinic is open:", style = MaterialTheme.typography.bodySmall)
-                DayPicker(days) { days = it }
                 OutlinedTextField(
                     value = peaksText,
                     onValueChange = { peaksText = it },
@@ -221,7 +217,7 @@ private fun SettingsScreen() {
                     minLines = 4,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                SchedulePreview(previewSchedule(openText, closeText, days, peaksText))
+                SchedulePreview(previewSchedule(openText, closeText, peaksText))
             }
 
             SectionTitle("Allow-list")
@@ -247,8 +243,9 @@ private fun SettingsScreen() {
                 modifier = Modifier.fillMaxWidth(),
             )
             Text(
-                "Always wins over the allow-list. Put staff, suppliers and personal " +
-                    "contacts here.",
+                "Always wins over the allow-list. Pre-filled with the escalation contact " +
+                    "(+60182888972) — leave that one in, or its replies get treated as " +
+                    "patient messages. Add staff, suppliers and personal contacts too.",
                 style = MaterialTheme.typography.bodySmall,
             )
 
@@ -260,7 +257,6 @@ private fun SettingsScreen() {
                     settings.scheduleEnabled = scheduleEnabled
                     ActiveSchedule.parseTime(openText)?.let { settings.openMinute = it }
                     ActiveSchedule.parseTime(closeText)?.let { settings.closeMinute = it }
-                    settings.openDays = days
                     settings.peakWindowsText = peaksText
                     settings.allowList = allow.lines()
                     settings.blockList = block.lines()
@@ -362,31 +358,6 @@ private fun PermissionCard(context: Context) {
     }
 }
 
-@Composable
-private fun DayPicker(selected: Set<Int>, onChange: (Set<Int>) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        DayOfWeek.values().forEach { day ->
-            val value = day.value
-            val isOn = value in selected
-            OutlinedButton(
-                onClick = {
-                    onChange(if (isOn) selected - value else selected + value)
-                },
-                modifier = Modifier.weight(1f),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(2.dp),
-            ) {
-                Text(
-                    day.name.take(1) + if (isOn) "✓" else "",
-                    style = MaterialTheme.typography.labelSmall,
-                )
-            }
-        }
-    }
-}
-
 /**
  * Shows the schedule as the two things the operator actually cares about: when the bridge
  * speaks, and when it stays out of the way. Both are derived, not entered — entering peak
@@ -395,17 +366,15 @@ private fun DayPicker(selected: Set<Int>, onChange: (Set<Int>) -> Unit) {
  */
 @Composable
 private fun SchedulePreview(schedule: ActiveSchedule) {
-    // Preview an open day; a closed day is trivially active for all 24 hours.
-    val sampleDay = schedule.openDays.minOrNull() ?: 1
-    val active = schedule.activeWindows(sampleDay)
-    val quiet = schedule.quietWindows(sampleDay)
+    val active = schedule.activeWindows()
+    val quiet = schedule.quietWindows()
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text("On an open day", fontWeight = FontWeight.SemiBold)
+            Text("Every day", fontWeight = FontWeight.SemiBold)
             Text(
                 "Forwarding ON: " + if (active.isEmpty()) "never" else active.joinToString(", "),
                 style = MaterialTheme.typography.bodySmall,
@@ -415,7 +384,8 @@ private fun SchedulePreview(schedule: ActiveSchedule) {
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
-                "On days the clinic is closed, forwarding runs all day.",
+                "The same schedule runs seven days a week. The booking line is staffed every " +
+                    "day, Sundays included, so there is no day-of-week setting.",
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -426,13 +396,11 @@ private fun SchedulePreview(schedule: ActiveSchedule) {
 private fun previewSchedule(
     openText: String,
     closeText: String,
-    days: Set<Int>,
     peaksText: String,
 ): ActiveSchedule = ActiveSchedule(
     enabled = true,
     openMinute = ActiveSchedule.parseTime(openText) ?: ActiveSchedule.DEFAULT.openMinute,
     closeMinute = ActiveSchedule.parseTime(closeText) ?: ActiveSchedule.DEFAULT.closeMinute,
-    openDays = days,
     peakWindows = ActiveSchedule.parseWindows(peaksText),
 )
 

@@ -35,7 +35,13 @@ have two problems this system fixes:
   ┌─────────────────────────┐        ┌──────────────────────────────┐
   │  WhatsApp Web Business  │        │  Clinic-Automation-Logs/     │
   │  reads context, sends   │───────▶│  WhatsApp_AutoReply_Log.md   │
-  └─────────────────────────┘        └──────────────────────────────┘
+  └───────────┬─────────────┘        └──────────────────────────────┘
+              │  can't answer safely?
+              ▼
+  ┌─────────────────────────┐
+  │  WhatsApp ping to Andy  │   "one chat I need your review"
+  │  +60182888972           │   patient's chat left untouched
+  └─────────────────────────┘
 ```
 
 The split matters. **The phone detects; the cloud decides and sends.** The Android app has no
@@ -69,8 +75,8 @@ Do it in this order; each step depends on the one before.
    ([details](android-detector/README.md#build-in-ci-no-local-android-sdk-needed)). It is not a
    Play Store app — see [why](android-detector/README.md#install-this-is-a-sideload-not-a-play-store-app).
 5. **On the phone**: grant Notification access, grant the battery-optimisation exemption, paste
-   the webhook URL and secret, populate the block-list with staff and supplier numbers, then
-   flip the master switch on.
+   the webhook URL and secret, then populate the block-list — **starting with Andy's escalation
+   number `+60182888972`**, plus staff, suppliers and family. Then flip the master switch on.
 6. **Test end to end** from another phone. Confirm a log row appears with `action: dry_run`.
 7. **Read a few days of dry-run drafts.** Then, and only then, decide about `DRY_RUN = false`.
 
@@ -90,7 +96,7 @@ covered alongside the hours the clinic is shut:
 
 - **Bridge active:** 00:00–09:30, 12:45–14:15, 17:00–18:30, 20:00–24:00
 - **Team handles it:** 09:30–12:45, 14:15–17:00, 18:30–20:00
-- **Days the clinic is closed:** active all day
+- **Every day, including Sunday** — one schedule, no day-of-week setting
 
 Peak windows as configured: `08:00-09:30`, `12:45-14:15`, `17:00-18:30`, `20:00-22:00`. The
 08:00 and 22:00 edges fall outside opening hours, where the bridge is active anyway — they're
@@ -101,8 +107,10 @@ re-checks before replying so a stale phone config can't put words over a staff m
 sitting right there. Editable in the app's settings screen, which previews the resulting active
 and quiet windows so a typo shows up before it costs a day of coverage.
 
-**Open days are assumed Mon–Sat.** Change it in the app if that's wrong — on a day marked closed
-the bridge runs 24 hours.
+**The same schedule runs seven days a week, deliberately.** This is a general booking line for
+several branches: some branch is open every day, and staff work the line on Sundays as usual, so
+there is no day where nobody is watching and no day that needs different treatment. A
+day-of-week setting would only ever be a thing to get wrong.
 
 ## Configuration decisions already made
 
@@ -126,6 +134,12 @@ should know they were deliberate:
 - **Groups are never auto-replied to**, at any setting. The Android switch only controls whether
   group messages get forwarded for logging.
 - **Dry-run is the default** and stays true until a human turns it off.
+- **Flagged messages ping a human on WhatsApp**, not just the log. Anything the Routine won't
+  answer sends a short message to Andy (+60 18-288 8972) — immediately for suspected emergencies,
+  otherwise one ping per chat per 20 minutes. The ping fires even in dry-run mode: dry-run is
+  about not messaging *patients*, and a flagged message is time-sensitive either way. Andy's
+  number is block-listed in both layers so his replies can't be mistaken for a patient enquiry
+  and answered — that entry is load-bearing, not tidiness.
 
 ## Risk note: WhatsApp Terms of Service
 

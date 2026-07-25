@@ -9,87 +9,75 @@ import org.junit.Test
 class ActiveScheduleTest {
 
     private val schedule = ActiveSchedule.DEFAULT
-    private val monday = 1
-    private val sunday = 7
 
     private fun at(hour: Int, minute: Int = 0) = hour * 60 + minute
 
     @Test
     fun `the clinic's real schedule is active exactly when nobody is free`() {
-        // Overnight and early morning: clinic shut.
-        assertTrue(schedule.isActiveAt(monday, at(2)))
-        assertTrue(schedule.isActiveAt(monday, at(8, 30)))
+        // Overnight and early morning: line unstaffed.
+        assertTrue(schedule.isActiveAt(at(2)))
+        assertTrue(schedule.isActiveAt(at(8, 30)))
 
         // 08:00-09:30 peak straddles the 09:00 opening; still active up to 09:29.
-        assertTrue(schedule.isActiveAt(monday, at(9, 29)))
+        assertTrue(schedule.isActiveAt(at(9, 29)))
 
         // First calm stretch: team can answer WhatsApp themselves.
-        assertFalse(schedule.isActiveAt(monday, at(9, 30)))
-        assertFalse(schedule.isActiveAt(monday, at(11)))
-        assertFalse(schedule.isActiveAt(monday, at(12, 44)))
+        assertFalse(schedule.isActiveAt(at(9, 30)))
+        assertFalse(schedule.isActiveAt(at(11)))
+        assertFalse(schedule.isActiveAt(at(12, 44)))
 
         // Lunch peak.
-        assertTrue(schedule.isActiveAt(monday, at(12, 45)))
-        assertTrue(schedule.isActiveAt(monday, at(14, 14)))
-        assertFalse(schedule.isActiveAt(monday, at(14, 15)))
+        assertTrue(schedule.isActiveAt(at(12, 45)))
+        assertTrue(schedule.isActiveAt(at(14, 14)))
+        assertFalse(schedule.isActiveAt(at(14, 15)))
 
         // Afternoon calm, then the evening changeover peak.
-        assertFalse(schedule.isActiveAt(monday, at(16, 59)))
-        assertTrue(schedule.isActiveAt(monday, at(17)))
-        assertTrue(schedule.isActiveAt(monday, at(18, 29)))
+        assertFalse(schedule.isActiveAt(at(16, 59)))
+        assertTrue(schedule.isActiveAt(at(17)))
+        assertTrue(schedule.isActiveAt(at(18, 29)))
 
         // Early-evening calm, then the late peak.
-        assertFalse(schedule.isActiveAt(monday, at(18, 30)))
-        assertFalse(schedule.isActiveAt(monday, at(19, 59)))
-        assertTrue(schedule.isActiveAt(monday, at(20)))
+        assertFalse(schedule.isActiveAt(at(18, 30)))
+        assertFalse(schedule.isActiveAt(at(19, 59)))
+        assertTrue(schedule.isActiveAt(at(20)))
 
         // After 21:00 close everything is off-hours, so active regardless of peaks.
-        assertTrue(schedule.isActiveAt(monday, at(21, 30)))
-        assertTrue(schedule.isActiveAt(monday, at(23, 59)))
-    }
-
-    @Test
-    fun `a closed day is active around the clock`() {
-        // Sunday is not in the default open days.
-        assertTrue(schedule.isActiveAt(sunday, at(11)))
-        assertTrue(schedule.isActiveAt(sunday, at(15, 30)))
+        assertTrue(schedule.isActiveAt(at(21, 30)))
+        assertTrue(schedule.isActiveAt(at(23, 59)))
     }
 
     @Test
     fun `disabling the schedule forwards everything`() {
         val always = schedule.copy(enabled = false)
-        assertTrue(always.isActiveAt(monday, at(11)))
-        assertTrue(always.isActiveAt(monday, at(15, 30)))
+        assertTrue(always.isActiveAt(at(11)))
+        assertTrue(always.isActiveAt(at(15, 30)))
     }
 
     @Test
     fun `derived windows match the operator's intent`() {
         assertEquals(
             listOf("00:00-09:30", "12:45-14:15", "17:00-18:30", "20:00-24:00"),
-            schedule.activeWindows(monday).map(TimeWindow::toString),
+            schedule.activeWindows().map(TimeWindow::toString),
         )
         assertEquals(
             listOf("09:30-12:45", "14:15-17:00", "18:30-20:00"),
-            schedule.quietWindows(monday).map(TimeWindow::toString),
+            schedule.quietWindows().map(TimeWindow::toString),
         )
     }
 
     @Test
     fun `active and quiet windows partition the day`() {
-        val covered = schedule.activeWindows(monday).sumOf { it.endMinute - it.startMinute } +
-            schedule.quietWindows(monday).sumOf { it.endMinute - it.startMinute }
+        val covered = schedule.activeWindows().sumOf { it.endMinute - it.startMinute } +
+            schedule.quietWindows().sumOf { it.endMinute - it.startMinute }
         assertEquals(ActiveSchedule.MINUTES_PER_DAY, covered)
     }
 
     @Test
     fun `no peak windows means the whole open day is quiet`() {
         val noPeaks = schedule.copy(peakWindows = emptyList())
-        assertFalse(noPeaks.isActiveAt(monday, at(12)))
-        assertTrue(noPeaks.isActiveAt(monday, at(23)))
-        assertEquals(
-            listOf("09:00-21:00"),
-            noPeaks.quietWindows(monday).map(TimeWindow::toString),
-        )
+        assertFalse(noPeaks.isActiveAt(at(12)))
+        assertTrue(noPeaks.isActiveAt(at(23)))
+        assertEquals(listOf("09:00-21:00"), noPeaks.quietWindows().map(TimeWindow::toString))
     }
 
     @Test
@@ -136,7 +124,7 @@ class ActiveScheduleTest {
         // Worth pinning down: a bad peak list means the bridge goes quiet during opening
         // hours rather than replying over staff all day. Off-hours forwarding still works.
         val broken = schedule.copy(peakWindows = ActiveSchedule.parseWindows("garbage"))
-        assertFalse(broken.isActiveAt(monday, at(10)))
-        assertTrue(broken.isActiveAt(monday, at(3)))
+        assertFalse(broken.isActiveAt(at(10)))
+        assertTrue(broken.isActiveAt(at(3)))
     }
 }

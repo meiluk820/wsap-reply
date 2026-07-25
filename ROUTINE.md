@@ -22,14 +22,32 @@ ALLOW_LIST                 = []        # empty = reply to everyone, including un
 BLOCK_LIST                 = []        # always wins over ALLOW_LIST
 
 # Schedule — see "Coverage windows" below. Mirrors the Android app's settings.
+# Applied identically every day: this is a general booking line covering several
+# branches, some branch is open every day, and staff work the line on Sundays too.
 CLINIC_OPEN                = 09:00
 CLINIC_CLOSE               = 21:00
-CLINIC_OPEN_DAYS           = Mon,Tue,Wed,Thu,Fri,Sat
 PEAK_WINDOWS               = 08:00-09:30, 12:45-14:15, 17:00-18:30, 20:00-22:00
 
 # Deliberate pause before sending — see "The overnight send delay" below.
 SEND_DELAY_WINDOW          = 01:00-05:00
 SEND_DELAY_SECONDS         = 60-120     # pick a fresh random value per message
+
+# Human-review escalation — see "Escalating to a human" below.
+ESCALATION_NOTIFY          = true
+ESCALATION_NUMBER          = +60182888972      # Andy
+ESCALATION_NAME            = Andy
+ESCALATION_QUIET_MINUTES   = 20         # don't re-ping about the same chat within this
+ESCALATION_INCLUDE_EXCERPT = true       # first ~120 chars of the patient's message
+```
+
+**`ESCALATION_NUMBER` must be on `BLOCK_LIST`.** It is, below — and it is not optional. The
+escalation ping is an outbound message to Andy, so his replies arrive as inbound messages on the
+clinic line. Without the block-list entry the Routine would treat "ok thanks" from Andy as a
+patient enquiry and reply to it, and a reply-to-a-reply loop between two automated ends is the
+one failure mode here that scales.
+
+```
+BLOCK_LIST                 = [+60182888972]    # Andy — escalation contact, never auto-reply
 ```
 
 `DRY_RUN = true` is the default and must stay that way until a batch of drafts has been read
@@ -43,13 +61,17 @@ business-hours filter:
 
 | When | Active? | Why |
 |---|---|---|
-| Outside `CLINIC_OPEN`–`CLINIC_CLOSE` | Yes | Nobody is there |
-| Days not in `CLINIC_OPEN_DAYS` | Yes, all day | Same |
+| Outside `CLINIC_OPEN`–`CLINIC_CLOSE` | Yes | Nobody is on the line |
 | Inside a `PEAK_WINDOWS` entry | Yes | Team is with patients and can't get to WhatsApp |
-| Any other time the clinic is open | **No** | Staff can see and answer it themselves |
+| Any other time inside opening hours | **No** | Staff can see and answer it themselves |
 
 With the values above that works out to **active 00:00–09:30, 12:45–14:15, 17:00–18:30,
-20:00–24:00** on an open day, and quiet during 09:30–12:45, 14:15–17:00, 18:30–20:00.
+20:00–24:00**, and quiet during 09:30–12:45, 14:15–17:00, 18:30–20:00.
+
+There is **no day-of-week dimension** — the same schedule runs seven days a week. The line is a
+general booking number for several branches, some branch is open every day, and staff work it on
+Sundays as usual, so there is no day where nobody is watching and no day that needs different
+treatment.
 
 The Android app applies this too, so in normal operation a quiet-window message never reaches
 the webhook. Re-check it here anyway: a phone with a stale config, a manually fired Routine, or
@@ -230,6 +252,50 @@ the reply is right.
 This is not a failure mode, it is the intended behaviour. A message that ends up in the
 human-review log has cost the clinic a few minutes. A confidently wrong auto-reply to a patient
 costs more than that.
+
+### Escalating to a human
+
+A log file nobody is watching is not an escalation. When a message is flagged
+`needs_human_review` and `ESCALATION_NOTIFY = true`, send a WhatsApp message to
+`ESCALATION_NUMBER` through the same WhatsApp Web session:
+
+```
+Hi Andy, I'm Claude — there's one chat I need your review on.
+
+From: <sender name or number>
+Why: <reason, in plain words — e.g. "sounds like a dental emergency">
+They said: "<first ~120 chars of the message>"
+Time: <HH:MM>
+
+I haven't replied to them. Can you take this one?
+```
+
+Rules:
+
+- **Emergency flags go immediately** — before anything else in the run, and never batched.
+  A suspected emergency waiting on a batch window defeats the point of flagging it.
+- **Everything else is rate-limited** by `ESCALATION_QUIET_MINUTES`: one ping per chat per
+  window, so a patient sending five messages in a row produces one ping, not five. If several
+  different chats need review inside one window, roll them into a single message listing each
+  rather than sending several.
+- **Send the ping even when `DRY_RUN = true`.** Dry-run exists to keep drafts away from
+  *patients*; Andy is staff, and a flagged message is time-sensitive whether or not the
+  patient-facing half is live. Note the asymmetry deliberately: dry-run silences replies, not
+  alerts.
+- **The ping is not a reply to the patient.** Never send both. If the ping goes out, the
+  patient's chat is untouched and the log row stays `needs_human_review`.
+- **If the ping itself fails to send**, log `escalation_failed` with the reason and carry on.
+  The log row for the underlying message must still be written — losing the record because the
+  notification failed would be the worst of both outcomes.
+- **`ESCALATION_INCLUDE_EXCERPT`** controls whether the patient's words are quoted. On by
+  default because triage speed is the whole point: Andy can judge "my tooth is killing me" from
+  the ping without opening WhatsApp. Turn it off if you'd rather patient text stayed in the
+  thread; Andy then gets sender and reason only.
+- Never put a patient's full message history, phone number formatting, or any clinical
+  interpretation of your own in the ping. Sender, reason, excerpt, time. Andy reads the thread.
+
+Andy's number is on `BLOCK_LIST`, so his replies never enter the reply pipeline — see the
+configuration note above for why that matters.
 
 ## 8. Log every run
 

@@ -13,19 +13,18 @@ section.
 
 ## Business hours
 
-Opening hours are **9:00am – 9:00pm**, the same on every day the clinic is open. Confirm the days
-below — Mon–Sat is an assumption, and it also drives the bridge's schedule (on a day marked
-closed, the bridge forwards for the full 24 hours).
+This WhatsApp number is a **general booking line for all branches**, staffed **9:00am – 9:00pm,
+seven days a week including Sundays**. Some branch is open every day, so replies and staff cover
+run as usual at weekends.
 
-| Day | Open | Close |
-|---|---|---|
-| Monday | 9:00am | 9:00pm |
-| Tuesday | 9:00am | 9:00pm |
-| Wednesday | 9:00am | 9:00pm |
-| Thursday | 9:00am | 9:00pm |
-| Friday | 9:00am | 9:00pm |
-| Saturday | 9:00am | 9:00pm |
-| Sunday | TODO — closed? | TODO |
+| Day | Line staffed |
+|---|---|
+| Monday – Sunday | 9:00am – 9:00pm |
+
+**Per-branch opening hours may differ from the line's hours** — a patient asking "are you open
+today?" means *their* branch, not the phone line. Fill in each branch's own hours below; until
+those are filled in, the Routine can't answer that question and will flag it for a human, which
+is the correct behaviour rather than a guess.
 
 Public holidays: TODO
 Lunch break: TODO — the 12:45–2:15pm peak window suggests the clinic stays open through lunch;
@@ -93,9 +92,17 @@ Booking link, if any: TODO
      people itself — it writes to the log — but knowing the path matters when you decide what
      to flag. -->
 
-- Emergency / clinical flags go to: TODO
-- General human-review queue watched by: TODO
-- Out-of-hours: TODO
+Anything the Routine flags as `needs_human_review` triggers a WhatsApp message to
+**Andy, +60 18-288 8972** — immediately for suspected emergencies, rate-limited to one ping per
+chat per 20 minutes otherwise. See [ROUTINE.md](../ROUTINE.md#escalating-to-a-human).
+
+Andy's number is on the block-list in both the app and the Routine, so his replies are never
+treated as patient messages. Don't remove that entry.
+
+- Emergency / clinical flags go to: Andy (+60 18-288 8972) by WhatsApp
+- General human-review queue watched by: Andy, same channel
+- Out-of-hours: TODO — is Andy the right contact at 3am, or should overnight flags wait for
+  morning? The pings currently fire at any hour.
 
 ## Standing exceptions
 

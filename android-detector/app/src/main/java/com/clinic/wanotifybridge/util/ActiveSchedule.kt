@@ -25,14 +25,18 @@ data class TimeWindow(val startMinute: Int, val endMinute: Int) {
  * When the bridge should be forwarding.
  *
  * The rule is not "during business hours" — it's the opposite. Forwarding matters exactly when
- * nobody at the clinic is free to answer WhatsApp:
+ * nobody at the clinic is free to answer:
  *
- *  - **outside opening hours**, because nobody is there at all;
- *  - **on days the clinic is closed**, all day, for the same reason;
+ *  - **outside opening hours**, because nobody is there;
  *  - **during peak windows inside opening hours**, because the team is with patients.
  *
  * The calm stretches of the working day are the only times forwarding is off: staff can see and
  * answer WhatsApp themselves, and a bot replying over them is worse than a slightly slower human.
+ *
+ * The same schedule applies **every day of the week** — there is deliberately no day dimension.
+ * This is a general booking line covering several branches: some branch is open every day and
+ * staff work the line as usual on Sundays, so there is no such thing as a day with nobody
+ * watching. A day-of-week dimension would be a setting that could only ever be wrong.
  *
  * Pure data with no Android dependencies, so the schedule logic is unit-testable.
  */
@@ -43,16 +47,12 @@ data class ActiveSchedule(
     val openMinute: Int,
     /** Clinic closing time, minutes past midnight. */
     val closeMinute: Int,
-    /** Days the clinic is open, as [java.time.DayOfWeek.getValue] (1 = Monday). */
-    val openDays: Set<Int>,
     /** Busy stretches *within* opening hours when the team can't get to WhatsApp. */
     val peakWindows: List<TimeWindow>,
 ) {
 
-    fun isActiveAt(dayOfWeek: Int, minuteOfDay: Int): Boolean {
+    fun isActiveAt(minuteOfDay: Int): Boolean {
         if (!enabled) return true
-        // Clinic shut for the day: nobody is watching WhatsApp, so forward everything.
-        if (dayOfWeek !in openDays) return true
 
         val open = TimeWindow(openMinute, closeMinute)
         if (!open.contains(minuteOfDay)) return true
@@ -61,13 +61,11 @@ data class ActiveSchedule(
         return peakWindows.any { it.contains(minuteOfDay) }
     }
 
-    /** The stretches of an open day when forwarding is on. For the settings-screen preview. */
-    fun activeWindows(dayOfWeek: Int): List<TimeWindow> =
-        runsWhere(dayOfWeek) { active -> active }
+    /** The stretches of the day when forwarding is on. For the settings-screen preview. */
+    fun activeWindows(): List<TimeWindow> = runsWhere { active -> active }
 
     /** The calm stretches, when the team answers WhatsApp themselves. */
-    fun quietWindows(dayOfWeek: Int): List<TimeWindow> =
-        runsWhere(dayOfWeek) { active -> !active }
+    fun quietWindows(): List<TimeWindow> = runsWhere { active -> !active }
 
     /**
      * Collapses the day into contiguous runs matching [wanted].
@@ -75,11 +73,11 @@ data class ActiveSchedule(
      * Walked minute by minute rather than with interval arithmetic: 1440 steps costs nothing,
      * and it handles overlapping and midnight-wrapping windows without special cases.
      */
-    private fun runsWhere(dayOfWeek: Int, wanted: (Boolean) -> Boolean): List<TimeWindow> {
+    private fun runsWhere(wanted: (Boolean) -> Boolean): List<TimeWindow> {
         val runs = mutableListOf<TimeWindow>()
         var runStart: Int? = null
         for (minute in 0 until MINUTES_PER_DAY) {
-            val match = wanted(isActiveAt(dayOfWeek, minute))
+            val match = wanted(isActiveAt(minute))
             if (match && runStart == null) {
                 runStart = minute
             } else if (!match && runStart != null) {
@@ -96,13 +94,12 @@ data class ActiveSchedule(
 
         /**
          * The clinic's real schedule: open 9:00–21:00, and busiest at opening, over lunch, at
-         * evening changeover, and late evening.
+         * evening changeover, and late evening. Applied identically seven days a week.
          */
         val DEFAULT = ActiveSchedule(
             enabled = true,
             openMinute = 9 * 60,
             closeMinute = 21 * 60,
-            openDays = setOf(1, 2, 3, 4, 5, 6),
             peakWindows = listOf(
                 TimeWindow(8 * 60, 9 * 60 + 30),
                 TimeWindow(12 * 60 + 45, 14 * 60 + 15),

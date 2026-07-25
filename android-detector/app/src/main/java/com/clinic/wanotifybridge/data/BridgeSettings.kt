@@ -51,14 +51,6 @@ class BridgeSettings private constructor(private val prefs: SharedPreferences) {
             .putInt(KEY_CLOSE, value.coerceIn(0, ActiveSchedule.MINUTES_PER_DAY))
             .apply()
 
-    /** Days the clinic is open, as [java.time.DayOfWeek.getValue] (1 = Monday). */
-    var openDays: Set<Int>
-        get() = prefs.getStringSet(KEY_OPEN_DAYS, null)?.mapNotNull(String::toIntOrNull)?.toSet()
-            ?: ActiveSchedule.DEFAULT.openDays
-        set(value) = prefs.edit()
-            .putStringSet(KEY_OPEN_DAYS, value.map(Int::toString).toSet())
-            .apply()
-
     /** Busy stretches within opening hours, as "HH:MM-HH:MM" lines. */
     var peakWindowsText: String
         get() = prefs.getString(KEY_PEAKS, null)
@@ -69,7 +61,6 @@ class BridgeSettings private constructor(private val prefs: SharedPreferences) {
         enabled = scheduleEnabled,
         openMinute = openMinute,
         closeMinute = closeMinute,
-        openDays = openDays,
         peakWindows = ActiveSchedule.parseWindows(peakWindowsText),
     )
 
@@ -84,16 +75,23 @@ class BridgeSettings private constructor(private val prefs: SharedPreferences) {
         get() = readList(KEY_ALLOW)
         set(value) = writeList(KEY_ALLOW, value)
 
-    /** Always wins over the allow-list. */
+    /**
+     * Always wins over the allow-list.
+     *
+     * Seeded with the escalation contact. The Routine messages that number whenever something
+     * needs human review, so its replies arrive as inbound messages on the clinic line — if it
+     * weren't blocked, "ok thanks" from the escalation contact would be treated as a patient
+     * enquiry and answered, which is a loop between two automated ends. Add staff, suppliers,
+     * labs and family here too.
+     */
     var blockList: List<String>
-        get() = readList(KEY_BLOCK)
+        get() = prefs.getString(KEY_BLOCK, null)?.let { parseList(it) } ?: DEFAULT_BLOCK_LIST
         set(value) = writeList(KEY_BLOCK, value)
 
-    private fun readList(key: String): List<String> =
-        prefs.getString(key, "").orEmpty()
-            .split('\n')
-            .map(String::trim)
-            .filter(String::isNotEmpty)
+    private fun readList(key: String): List<String> = parseList(prefs.getString(key, "").orEmpty())
+
+    private fun parseList(raw: String): List<String> =
+        raw.split('\n').map(String::trim).filter(String::isNotEmpty)
 
     private fun writeList(key: String, value: List<String>) {
         prefs.edit().putString(key, value.joinToString("\n")).apply()
@@ -112,10 +110,12 @@ class BridgeSettings private constructor(private val prefs: SharedPreferences) {
         private const val KEY_SCHEDULE_ENABLED = "schedule_enabled"
         private const val KEY_OPEN = "clinic_open"
         private const val KEY_CLOSE = "clinic_close"
-        private const val KEY_OPEN_DAYS = "clinic_open_days"
         private const val KEY_PEAKS = "peak_windows"
         private const val KEY_ALLOW = "allow_list"
         private const val KEY_BLOCK = "block_list"
+
+        /** Andy — the human-review escalation contact. See [blockList]. */
+        private val DEFAULT_BLOCK_LIST = listOf("+60182888972")
 
         @Volatile
         private var instance: BridgeSettings? = null

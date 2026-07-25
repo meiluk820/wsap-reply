@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * The detector. Watches WhatsApp / WhatsApp Business notifications and forwards genuinely
@@ -71,9 +71,8 @@ class WaNotificationListener : NotificationListenerService() {
      * POST is retrying does not cancel that POST — the message did arrive during the window.
      */
     private fun isScheduleActive(settings: BridgeSettings): Boolean {
-        val now = LocalDateTime.now()
-        return settings.activeSchedule()
-            .isActiveAt(now.dayOfWeek.value, now.hour * 60 + now.minute)
+        val now = LocalTime.now()
+        return settings.activeSchedule().isActiveAt(now.hour * 60 + now.minute)
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {

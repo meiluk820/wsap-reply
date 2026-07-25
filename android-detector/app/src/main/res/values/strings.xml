@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">WA Notify Bridge</string>
+    <string name="channel_bridge_name">Bridge status</string>
+    <string name="channel_bridge_desc">Persistent low-priority notification that keeps the bridge alive.</string>
+    <string name="service_active">Auto-reply bridge active</string>
+    <string name="service_paused">Auto-reply bridge paused</string>
+</resources>

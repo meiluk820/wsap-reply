@@ -1,0 +1,19 @@
+# Android / Gradle
+android-detector/.gradle/
+android-detector/build/
+android-detector/app/build/
+android-detector/local.properties
+android-detector/.idea/
+*.iml
+
+# Signing material — never commit these
+android-detector/keystore.properties
+*.jks
+*.keystore
+
+# Never commit real secrets or real patient data
+.env
+context/clinic-info.local.md
+logs/*.md
+!logs/README.md
+!logs/*.template.md

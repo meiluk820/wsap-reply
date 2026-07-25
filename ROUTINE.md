@@ -26,6 +26,10 @@ CLINIC_OPEN                = 09:00
 CLINIC_CLOSE               = 21:00
 CLINIC_OPEN_DAYS           = Mon,Tue,Wed,Thu,Fri,Sat
 PEAK_WINDOWS               = 08:00-09:30, 12:45-14:15, 17:00-18:30, 20:00-22:00
+
+# Deliberate pause before sending — see "The overnight send delay" below.
+SEND_DELAY_WINDOW          = 01:00-05:00
+SEND_DELAY_SECONDS         = 60-120     # pick a fresh random value per message
 ```
 
 `DRY_RUN = true` is the default and must stay that way until a batch of drafts has been read
@@ -56,6 +60,33 @@ Note the interaction with the staff-reply gate — during peak windows the team 
 absent, so someone may still answer between the notification firing and this Routine reaching
 step 4. Gate #3 is what catches that, and it matters more here than it would in an
 off-hours-only design.
+
+### The overnight send delay
+
+Between `SEND_DELAY_WINDOW` (01:00–05:00), wait a random `SEND_DELAY_SECONDS` (60–120s) before
+sending. Two reasons, and they pull the same way:
+
+- A reply landing in under a second at 3am is one of the clearest automation signatures there is.
+  A minute or two of latency reads as a human who was awake, and costs nothing at that hour.
+- It gives a staff member who *is* awake and looking at the phone a moment to answer first, which
+  the staff-reply gate then honours.
+
+Rules:
+
+- Judge the window on the **payload `timestamp`**, not on when the Routine runs.
+- Pick a **fresh random value per message.** A constant delay is as much of a fingerprint as no
+  delay — four replies exactly 90s apart is a pattern, not a person.
+- **Re-run the staff-reply check (gate #3) after the wait**, not just before it. Two minutes is
+  plenty of time for a human to have replied, and sending on top of them is the exact outcome the
+  delay was meant to help avoid.
+- The delay applies **only to sending.** Validate, gate, read the thread and draft immediately —
+  if something is going to stop the send, it should stop it now rather than after a two-minute
+  sleep.
+- In `DRY_RUN` mode, skip the wait entirely. There is nothing to pace.
+- Outside the window, send with no artificial delay.
+
+Record the delay actually used in the log's `Reason` column, e.g. `delayed 94s (overnight)`, so a
+pattern is auditable after the fact.
 
 **`ALLOW_LIST` is empty by design.** The operator's instruction is that unknown numbers should
 receive a reply — a first-time patient messaging the clinic is the main case this system exists
@@ -174,11 +205,17 @@ can read without any of them having gone out.
 
 **If `DRY_RUN = false`:**
 
-1. Click the message input in the correct chat. Verify the chat header still shows the intended
-   sender before typing — a background chat-list update can shift the open chat.
-2. Type the reply and send.
-3. Screenshot and confirm the message appears in the thread with a timestamp and a checkmark.
-4. If the send cannot be confirmed, log `needs human review — send unconfirmed` with the draft
+1. **If the message arrived inside `SEND_DELAY_WINDOW`**, wait a fresh random
+   `SEND_DELAY_SECONDS` now — after drafting, before touching the chat. See
+   "The overnight send delay" above.
+2. **If you waited, re-check gate #3.** If a staff member replied during the wait, discard the
+   draft and log `skipped_staff_replied` with reason `replied during send delay`.
+3. Click the message input in the correct chat. Verify the chat header still shows the intended
+   sender before typing — a background chat-list update can shift the open chat, and a two-minute
+   wait makes that more likely, not less.
+4. Type the reply and send.
+5. Screenshot and confirm the message appears in the thread with a timestamp and a checkmark.
+6. If the send cannot be confirmed, log `needs human review — send unconfirmed` with the draft
    text. Do **not** retry the send; a duplicate message to a patient is worse than a missing
    one, and the log tells a human exactly what to check.
 

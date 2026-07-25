@@ -1,0 +1,75 @@
+name: Build APK
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "android-detector/**"
+      - ".github/workflows/build.yml"
+  pull_request:
+    paths:
+      - "android-detector/**"
+      - ".github/workflows/build.yml"
+  # So a build can be kicked off by hand without pushing anything.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android-detector
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The GitHub-hosted ubuntu runner image ships the Android SDK and
+      # command-line tools already, so there is nothing to install.
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          # Only the default branch writes the shared cache; PR builds read it.
+          cache-read-only: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+
+      # Fails the build if the committed wrapper JAR isn't a genuine Gradle
+      # release — worth having, since the JAR is a binary in the repo.
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Unit tests
+        run: ./gradlew test --stacktrace
+
+      - name: Lint
+        run: ./gradlew lintDebug --stacktrace
+        continue-on-error: true
+
+      - name: Assemble debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: wa-notify-bridge-debug-${{ github.sha }}
+          path: android-detector/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      # Uploaded even when the build fails — that's when they're worth reading.
+      - name: Upload test and lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ github.sha }}
+          path: |
+            android-detector/app/build/reports/
+          if-no-files-found: ignore
+          retention-days: 14

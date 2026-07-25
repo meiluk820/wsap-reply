@@ -36,7 +36,7 @@ One row per webhook trigger, appended. Matches the pipe-table convention of the 
 | `Action` | One of the values below |
 | `Incoming message` | Verbatim, truncated to 200 chars, newlines as `⏎` so the row stays a row |
 | `Reply` | The reply sent, or the draft in dry-run mode; empty when nothing was drafted |
-| `Reason` | Why this action — always filled in for anything other than `sent` |
+| `Reason` | Why this action. Always filled in for anything other than a plain `sent`; on an overnight send, records the pause used, e.g. `delayed 94s (overnight)` |
 
 ### `Action` values
 
@@ -46,7 +46,7 @@ One row per webhook trigger, appended. Matches the pipe-table convention of the 
 | `dry_run` | Draft produced, deliberately not sent (`DRY_RUN = true`) |
 | `no_reply_needed` | Nothing to answer — "ok", "thanks", an emoji |
 | `skipped_group` | Group chat; log-only by policy |
-| `skipped_staff_replied` | A human answered in the thread within the staff-reply window |
+| `skipped_staff_replied` | A human answered in the thread within the staff-reply window — including during the overnight send delay |
 | `skipped_blocked` | Sender on the block-list, or off a non-empty allow-list |
 | `skipped_quiet_window` | Arrived during a calm stretch of the working day; staff handle it |
 | `needs_human_review` | Flagged for a person. `Reason` says which gate fired |
@@ -67,6 +67,7 @@ One row per webhook trigger, appended. Matches the pipe-table convention of the 
 | 2026-07-25T09:31:47+08:00 | +60 12-345 6789 | whatsapp_business | individual | needs_human_review | My tooth has been aching since last night | | emergency signal |
 | 2026-07-25T10:02:11+08:00 | Clinic Staff Group | whatsapp_business | group: PJ Front Desk | skipped_group | Anyone free to cover 3pm? | | group policy |
 | 2026-07-25T10:20:05+08:00 | Siti | whatsapp_business | individual | no_reply_needed | ok thanks! | | nothing to answer |
+| 2026-07-26T02:41:33+08:00 | +60 11-222 3344 | whatsapp_business | individual | sent | Hi, do you take walk-ins? | We do, but Saturdays fill up fast — the front desk will message you in the morning to lock in a time. | delayed 94s (overnight) |
 ```
 
 ## Retention

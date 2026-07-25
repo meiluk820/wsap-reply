@@ -51,6 +51,7 @@ gates, where it's auditable and can be switched off with a single config flag.
 | [`ROUTINE.md`](ROUTINE.md) | The Routine spec — validation, safety gates, drafting rules, dry-run mode. Paste into a webhook Routine in Claude Code Desktop. |
 | [`context/clinic-info.md`](context/clinic-info.md) | **Placeholder — fill this in.** The only facts the Routine is allowed to state to a patient. |
 | [`logs/README.md`](logs/README.md) | Log row format, action/reason vocabulary, and where the real file lives. |
+| [`.github/workflows/build.yml`](.github/workflows/build.yml) | CI that builds the debug APK and runs the unit tests, so no local Android SDK is needed. |
 
 ## Setup order
 
@@ -63,8 +64,10 @@ Do it in this order; each step depends on the one before.
    `DRY_RUN = true`. Copy out the webhook URL and secret.
 3. **Confirm the Routine's environment**: Claude in Chrome, a WhatsApp Web Business tab already
    signed in, and access to the `Clinic-Automation-Logs` Desktop folder.
-4. **Build and sideload the Android app** (`./gradlew assembleRelease`, then `adb install`).
-   It is not a Play Store app — see [why](android-detector/README.md#install-this-is-a-sideload-not-a-play-store-app).
+4. **Get the APK and sideload it.** Easiest path needs no local Android SDK: push the branch and
+   download the debug APK from the GitHub Actions run
+   ([details](android-detector/README.md#build-in-ci-no-local-android-sdk-needed)). It is not a
+   Play Store app — see [why](android-detector/README.md#install-this-is-a-sideload-not-a-play-store-app).
 5. **On the phone**: grant Notification access, grant the battery-optimisation exemption, paste
    the webhook URL and secret, populate the block-list with staff and supplier numbers, then
    flip the master switch on.
@@ -147,9 +150,11 @@ What that means in practice:
   signature — bursts, identical repeated text, inhuman response latency and messaging numbers
   that never messaged you first are the signals most likely to draw enforcement, and overnight
   coverage plus an open allow-list hits three of the four. That is the direct cost of covering
-  off-hours, and it is worth accepting knowingly rather than discovering later. Dry-run mode is
-  the one lever that removes the exposure entirely; a deliberate short delay before sending
-  (rather than replying in under a second) is the cheapest way to soften the rest.
+  off-hours, and it is worth accepting knowingly rather than discovering later. The Routine
+  softens the worst of it with a randomised 1–2 minute pause before sending between 1am and 5am
+  (see [ROUTINE.md](ROUTINE.md#the-overnight-send-delay)) — a reply that takes a minute reads as
+  someone awake rather than as software. It reduces the signal; it doesn't remove it. Dry-run mode
+  is the only lever that removes the exposure entirely.
 - **This system does not make automated sending compliant.** The safety gates exist to stop the
   Routine saying something wrong to a patient. They are not a ToS workaround and don't make the
   automation authorised.

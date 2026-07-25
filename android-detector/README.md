@@ -81,7 +81,30 @@ For MessagingStyle notifications (what modern WhatsApp posts) only the **newest*
 `EXTRA_MESSAGES` is read. WhatsApp attaches the recent history of the chat on every re-post;
 reading all of it would re-forward old messages.
 
-## Build
+## Build in CI (no local Android SDK needed)
+
+[`.github/workflows/build.yml`](../.github/workflows/build.yml) builds the debug APK on every
+push that touches `android-detector/`. GitHub's `ubuntu-latest` runner image already has the
+Android SDK, so there is nothing to install and no local dev environment to maintain.
+
+To get an APK:
+
+1. Push to any branch (or trigger the workflow by hand: **Actions → Build APK → Run workflow**).
+2. Open the run under the repo's **Actions** tab.
+3. Download the **`wa-notify-bridge-debug-<sha>`** artifact — a zip containing `app-debug.apk`.
+4. Unzip and install it on the phone with `adb install -r app-debug.apk`, or copy the APK across
+   and open it.
+
+The workflow also runs the unit tests and uploads the test and lint reports as a separate
+artifact, kept even when the build fails — that's when they're worth reading. Lint is
+`continue-on-error` so a style warning doesn't cost you the APK; the tests are not, so a broken
+dedupe or schedule fails the build.
+
+Artifacts are debug-signed with the standard Android debug key. That's fine for installing on
+your own phone and wrong for anything else — a release build needs the signing setup below, run
+locally, because the keystore must not go in the repo or in CI secrets for a project like this.
+
+## Build locally
 
 Requirements: JDK 17, Android SDK with platform 35, Android Studio Ladybug or newer (or just
 the command-line SDK).

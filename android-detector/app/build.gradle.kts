@@ -1,3 +1,8 @@
+// Imported explicitly: inside the `android { }` block below, `java` resolves to Gradle's
+// `java` extension accessor rather than the java.* package, so a fully-qualified
+// `java.util.Properties` fails to compile there.
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -20,7 +25,7 @@ android {
     // See android-detector/README.md for how to generate it.
     val keystorePropsFile = rootProject.file("keystore.properties")
     if (keystorePropsFile.exists()) {
-        val keystoreProps = java.util.Properties().apply {
+        val keystoreProps = Properties().apply {
             keystorePropsFile.inputStream().use { load(it) }
         }
         signingConfigs {

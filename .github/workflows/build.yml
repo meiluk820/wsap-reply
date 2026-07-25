@@ -46,14 +46,14 @@ jobs:
         uses: gradle/actions/wrapper-validation@v4
 
       - name: Unit tests
-        run: ./gradlew test --stacktrace
+        run: ./gradlew test
 
       - name: Lint
-        run: ./gradlew lintDebug --stacktrace
+        run: ./gradlew lintDebug
         continue-on-error: true
 
       - name: Assemble debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4

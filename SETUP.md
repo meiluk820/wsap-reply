@@ -29,6 +29,38 @@ Leave this page open. Every request the app sends will appear here within a seco
 > second phone.** Don't leave the app pointed here waiting for real patient messages — anyone
 > with the URL can read what arrives.
 
+### If the webhook.site page looks broken
+
+If you see `{{ ... }}` placeholders on the page instead of a real URL — e.g. "Your unique URL"
+reading `{{ useSubdomain ? getUrlSubdomain() : getUrl() }}` — the page's JavaScript didn't run.
+Any warning banners you can see in that state are unrendered template text too, **not** real
+limits on your URL. An ad blocker or script blocker is the usual cause.
+
+1. Hard refresh: `Ctrl+Shift+R`.
+2. Open it in a private window, where extensions are off: `Ctrl+Shift+N`.
+3. Turn your ad blocker off for the site and reload.
+
+Still broken? Use **https://requestcatcher.com** instead — a simpler page with less to go wrong.
+It gives you `https://something.requestcatcher.com`, and requests show up as they arrive. Use that
+URL everywhere this guide says webhook.site.
+
+### Fallback: prove detection with no third-party site at all
+
+If no inbox service will cooperate, you can still prove the phone is detecting messages, using
+only the app:
+
+1. Set **Webhook URL** to `https://example.com/nope` and any secret. Save. Forwarding ON.
+2. Send a test message from your second phone.
+3. Open the app and look at **Delivery failures** at the bottom.
+
+An entry appearing there — timestamp, a partly-hidden sender like `Ra…ar`, and `HTTP 404` — proves
+the notification was **detected, parsed, and a send was attempted**. That is the part most likely
+to go wrong, and this confirms it without any external service.
+
+What it can't show you is the JSON itself, so the parser fields stay unverified until you get a
+real inbox working. Worth doing anyway: it splits "the phone isn't detecting" from "the endpoint
+isn't receiving", which are very different problems.
+
 ## 1.2 Install the app on the clinic phone
 
 On the **clinic phone's browser**, open:

@@ -19,6 +19,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Needed by the rolling-prerelease step below, which publishes the APK.
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: android-detector
@@ -62,6 +65,26 @@ jobs:
           path: android-detector/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 30
+
+      # Artifacts require a GitHub login and arrive as a zip, which makes installing on a
+      # phone awkward. A rolling prerelease gives one stable, directly-downloadable URL
+      # that a phone browser can open and hand straight to the installer.
+      - name: Publish APK to the rolling "latest-debug" prerelease
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest-debug --yes --cleanup-tag || true
+          gh release create latest-debug \
+            --title "Latest debug APK" \
+            --prerelease \
+            --notes "Debug-signed build of WA Notify Bridge from ${{ github.sha }}.
+
+          Install on the clinic phone: open this page on the phone, tap \`app-debug.apk\`,
+          allow installs from your browser if prompted, then follow \`SETUP.md\` in the repo.
+
+          Debug-signed, so it is fine for your own phone and not for distribution." \
+            app/build/outputs/apk/debug/app-debug.apk
 
       # Uploaded even when the build fails — that's when they're worth reading.
       - name: Upload test and lint reports

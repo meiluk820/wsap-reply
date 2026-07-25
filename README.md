@@ -57,9 +57,14 @@ gates, where it's auditable and can be switched off with a single config flag.
 | [`ROUTINE.md`](ROUTINE.md) | The Routine spec — validation, safety gates, drafting rules, dry-run mode. Paste into a webhook Routine in Claude Code Desktop. |
 | [`context/clinic-info.md`](context/clinic-info.md) | **Placeholder — fill this in.** The only facts the Routine is allowed to state to a patient. |
 | [`logs/README.md`](logs/README.md) | Log row format, action/reason vocabulary, and where the real file lives. |
-| [`.github/workflows/build.yml`](.github/workflows/build.yml) | CI that builds the debug APK and runs the unit tests, so no local Android SDK is needed. |
+| [`SETUP.md`](SETUP.md) | Step-by-step walkthrough for first-time setup, written for a non-developer. |
+| [`.github/workflows/build.yml`](.github/workflows/build.yml) | CI that builds the debug APK and runs the unit tests, so no local Android SDK is needed. It also publishes the APK to a [`latest-debug`](../../releases/tag/latest-debug) prerelease you can download straight onto the phone. |
 
 ## Setup order
+
+**Following this for the first time? Use [`SETUP.md`](SETUP.md)** — same steps, written tap by tap
+for someone who doesn't work with Android, including how to test detection on its own before any of
+the rest is wired up. The list below is the short version.
 
 Do it in this order; each step depends on the one before.
 

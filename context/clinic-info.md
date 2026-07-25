@@ -21,10 +21,10 @@ run as usual at weekends.
 |---|---|
 | Monday – Sunday | 9:00am – 9:00pm |
 
-**Per-branch opening hours may differ from the line's hours** — a patient asking "are you open
-today?" means *their* branch, not the phone line. Fill in each branch's own hours below; until
-those are filled in, the Routine can't answer that question and will flag it for a human, which
-is the correct behaviour rather than a guess.
+**These are the line's staffing hours, not any branch's opening hours** — and the Routine must
+never quote them to a patient asking "are you open?". A patient asking about timing means *their*
+branch, so the Routine asks which branch first and answers only for SS2 Taman Paramount. See
+[Branches](#branches) below.
 
 Public holidays: TODO
 Lunch break: TODO — the 12:45–2:15pm peak window suggests the clinic stays open through lunch;
@@ -40,14 +40,38 @@ times" unless you decide you want that.
 
 ## Branches
 
-<!-- TODO. One block per branch. The Routine may state address, area and phone; nothing else. -->
+Three branches share this one booking line:
 
-### TODO Branch name
-- Area: TODO
+| Branch | Timing questions |
+|---|---|
+| **SS2 Taman Paramount** | Open every day — the Routine may say so |
+| **Ara Damansara** | **Leave for the team.** Flag, don't answer |
+| **Putra Heights** | **Leave for the team.** Flag, don't answer |
+
+A patient asking about timing never gets an answer until they've said which branch — see
+[ROUTINE.md](../ROUTINE.md#branch-timing-questions) for the exact flow.
+
+### SS2 Taman Paramount
+- Open: **every day** (confirmed)
+- Exact opening and closing times: TODO — "open every day" fixes the *days*, not the hours. Until
+  this is filled in, the Routine can say the branch is open every day but must not state a time,
+  and "what time do you close?" gets flagged. Worth filling in first; it's the most common
+  question this branch will get.
 - Address: TODO
 - Phone: TODO
 - Parking / how to find it: TODO
-- Hours if different from above: TODO
+
+### Ara Damansara
+- Timing: **never answered automatically.** Flag for the team.
+- Address: TODO
+- Phone: TODO
+- Parking / how to find it: TODO
+
+### Putra Heights
+- Timing: **never answered automatically.** Flag for the team.
+- Address: TODO
+- Phone: TODO
+- Parking / how to find it: TODO
 
 ## Services offered
 

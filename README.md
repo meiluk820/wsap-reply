@@ -134,6 +134,12 @@ should know they were deliberate:
 - **Groups are never auto-replied to**, at any setting. The Android switch only controls whether
   group messages get forwarded for logging.
 - **Dry-run is the default** and stays true until a human turns it off.
+- **Timing questions always ask which branch first.** One number serves SS2 Taman Paramount, Ara
+  Damansara and Putra Heights, so "are you open?" is unanswerable as asked. Only SS2 gets an
+  automatic answer (open every day); Ara Damansara and Putra Heights timing goes to the team. The
+  Routine must never answer with the booking line's 09:00–21:00 staffing hours — those are when
+  someone answers WhatsApp, not when a branch is open, and confusing the two would be the most
+  confidently wrong reply this system could produce.
 - **Flagged messages ping a human on WhatsApp**, not just the log. Anything the Routine won't
   answer sends a short message to Andy (+60 18-288 8972) — immediately for suspected emergencies,
   otherwise one ping per chat per 20 minutes. The ping fires even in dry-run mode: dry-run is

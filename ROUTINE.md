@@ -219,6 +219,45 @@ Rules for the draft:
   a thumbs-up — send nothing. Log `no reply needed`. A bot that answers "thanks" with a
   paragraph is worse than one that stays quiet.
 
+### Branch timing questions
+
+This is one number for three branches, so "are you open?" / "what time do you close?" /
+"open tomorrow?" is never answerable as asked. **Never guess the branch**, and never answer with
+the booking line's own 09:00–21:00 staffing hours — those are when someone answers WhatsApp, not
+when any branch is open. Conflating the two would be the most confidently wrong reply this system
+could produce.
+
+**Step 1 — the branch is not yet known.** Ask, and only ask:
+
+```
+Sure — which branch are you asking about? SS2 Taman Paramount, Ara Damansara, or Putra Heights?
+```
+
+Log `asked_which_branch`. Do not include hours, do not guess, do not add anything else to the
+message.
+
+**Step 2 — the patient answers.** Their reply arrives as a *separate* webhook trigger, so treat it
+as a fresh run that happens to have context. Reading the last 5–10 messages (step 4) is what makes
+this work: you will see your own "which branch?" question above their reply, which is how you know
+a bare "ara damansara" or "putra" is an answer and not an opening enquiry. Then:
+
+| Branch named | Action |
+|---|---|
+| **SS2 Taman Paramount** | Answer that it's open **every day**. State a specific time only if `clinic-info.md` has that branch's hours filled in — otherwise flag `fact not in clinic-info` |
+| **Ara Damansara** | Do **not** answer. Log `needs_human_review`, reason `branch timing — team replies`, and escalate |
+| **Putra Heights** | Same — flag and escalate |
+| Something else, or unclear | Flag `unclear intent`. Don't re-ask the same question twice; a patient who has answered once and still isn't understood needs a person |
+
+Two consequences of this being a two-turn flow, both acceptable, neither a bug:
+
+- **In `DRY_RUN` mode there is no second turn.** The "which branch?" question is drafted and
+  logged, never sent, so the patient never answers it. Dry-run shows you the *first* turn only —
+  don't read the absence of branch answers in a dry-run batch as the flow being broken.
+- **The answer can land in a quiet window and go unforwarded.** Ask at 08:00 during a peak, and a
+  reply at 10:00 never reaches the Routine. That's fine: staff are watching WhatsApp during quiet
+  windows, and a half-finished exchange sitting in the thread is exactly the sort of thing a human
+  picks up. It does mean the log will show `asked_which_branch` rows with no follow-up row.
+
 ## 6. Send — or don't
 
 **If `DRY_RUN = true`:** log the draft with `action: dry_run` and stop. Do not open the message

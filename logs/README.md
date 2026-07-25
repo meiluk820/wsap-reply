@@ -45,6 +45,7 @@ One row per webhook trigger, appended. Matches the pipe-table convention of the 
 | `sent` | Reply sent and confirmed in the thread |
 | `dry_run` | Draft produced, deliberately not sent (`DRY_RUN = true`) |
 | `no_reply_needed` | Nothing to answer — "ok", "thanks", an emoji |
+| `asked_which_branch` | A timing question arrived without a branch; sent the clarifying question. May legitimately have no follow-up row — see ROUTINE.md |
 | `skipped_group` | Group chat; log-only by policy |
 | `skipped_staff_replied` | A human answered in the thread within the staff-reply window — including during the overnight send delay |
 | `skipped_blocked` | Sender on the block-list, or off a non-empty allow-list |
@@ -57,7 +58,7 @@ One row per webhook trigger, appended. Matches the pipe-table convention of the 
 
 `emergency signal` · `chat not found` · `ambiguous chat match` ·
 `message not found in thread` · `whatsapp web not authenticated` · `unclear intent` ·
-`fact not in clinic-info` · `send unconfirmed` · `tool error`
+`fact not in clinic-info` · `branch timing — team replies` · `send unconfirmed` · `tool error`
 
 ## Example
 
@@ -68,6 +69,8 @@ One row per webhook trigger, appended. Matches the pipe-table convention of the 
 | 2026-07-25T09:31:47+08:00 | +60 12-345 6789 | whatsapp_business | individual | needs_human_review | My tooth has been aching since last night | | emergency signal — escalated to Andy |
 | 2026-07-25T10:02:11+08:00 | Clinic Staff Group | whatsapp_business | group: PJ Front Desk | skipped_group | Anyone free to cover 3pm? | | group policy |
 | 2026-07-25T10:20:05+08:00 | Siti | whatsapp_business | individual | no_reply_needed | ok thanks! | | nothing to answer |
+| 2026-07-25T20:14:20+08:00 | Wei Ling | whatsapp_business | individual | asked_which_branch | are you open tomorrow? | Sure — which branch are you asking about? SS2 Taman Paramount, Ara Damansara, or Putra Heights? | branch unknown |
+| 2026-07-25T20:16:03+08:00 | Wei Ling | whatsapp_business | individual | needs_human_review | ara damansara | | branch timing — team replies — escalated to Andy |
 | 2026-07-26T02:41:33+08:00 | +60 11-222 3344 | whatsapp_business | individual | sent | Hi, do you take walk-ins? | We do, but Saturdays fill up fast — the front desk will message you in the morning to lock in a time. | delayed 94s (overnight) |
 ```
 

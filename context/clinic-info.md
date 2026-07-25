@@ -101,8 +101,11 @@ treated as patient messages. Don't remove that entry.
 
 - Emergency / clinical flags go to: Andy (+60 18-288 8972) by WhatsApp
 - General human-review queue watched by: Andy, same channel
-- Out-of-hours: TODO — is Andy the right contact at 3am, or should overnight flags wait for
-  morning? The pings currently fire at any hour.
+- Out-of-hours: **same contact, any hour.** Pings fire at 3am as readily as at 3pm; Andy attends
+  to them when he's available. This is a deliberate choice — the alternative was queuing overnight
+  flags until morning, which would delay exactly the emergency messages the flag exists to catch.
+  The trade-off accepted is that a flagged message can ping a sleeping phone with no one acting on
+  it for hours.
 
 ## Standing exceptions
 

@@ -274,6 +274,9 @@ Rules:
 
 - **Emergency flags go immediately** — before anything else in the run, and never batched.
   A suspected emergency waiting on a batch window defeats the point of flagging it.
+- **No overnight quiet hours.** Pings fire at any hour, 3am included; the escalation contact
+  attends to them when available. Do not add a "hold until morning" rule — that would delay
+  exactly the messages the flag exists to catch. The rate limit below is the only throttle.
 - **Everything else is rate-limited** by `ESCALATION_QUIET_MINUTES`: one ping per chat per
   window, so a patient sending five messages in a row produces one ping, not five. If several
   different chats need review inside one window, roll them into a single message listing each

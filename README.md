@@ -71,6 +71,36 @@ Do it in this order; each step depends on the one before.
 6. **Test end to end** from another phone. Confirm a log row appears with `action: dry_run`.
 7. **Read a few days of dry-run drafts.** Then, and only then, decide about `DRY_RUN = false`.
 
+## Coverage windows
+
+The clinic opens **9:00am–9:00pm**, and the team is busiest at opening, over lunch, at evening
+changeover, and late evening. Those peaks are exactly when WhatsApp goes unanswered, so they get
+covered alongside the hours the clinic is shut:
+
+```
+        00:00      09:00   09:30      12:45   14:15   17:00   18:30   20:00   21:00      24:00
+          │          │       │          │       │       │       │       │       │          │
+ BRIDGE   ████████████████████          █████████       █████████       ██████████████████████
+ TEAM                        ████████████       █████████       █████████
+          └── closed ────────┴────────── open 09:00–21:00 ──────────────┴──── closed ─────┘
+```
+
+- **Bridge active:** 00:00–09:30, 12:45–14:15, 17:00–18:30, 20:00–24:00
+- **Team handles it:** 09:30–12:45, 14:15–17:00, 18:30–20:00
+- **Days the clinic is closed:** active all day
+
+Peak windows as configured: `08:00-09:30`, `12:45-14:15`, `17:00-18:30`, `20:00-22:00`. The
+08:00 and 22:00 edges fall outside opening hours, where the bridge is active anyway — they're
+written that way so the list reads as the clinic's real peaks rather than as a derived artefact.
+
+Both layers apply this: the Android app won't forward a quiet-window message, and the Routine
+re-checks before replying so a stale phone config can't put words over a staff member who is
+sitting right there. Editable in the app's settings screen, which previews the resulting active
+and quiet windows so a typo shows up before it costs a day of coverage.
+
+**Open days are assumed Mon–Sat.** Change it in the app if that's wrong — on a day marked closed
+the bridge runs 24 hours.
+
 ## Configuration decisions already made
 
 Recorded here because they're the ones that change behaviour most, and because a future reader
@@ -85,10 +115,11 @@ should know they were deliberate:
   out-of-hours messages before spending a network call; the Routine re-checks its own lists as
   the authoritative gate. Two lists to maintain, but a stale phone config can't open a hole in
   the cloud policy.
-- **Outside business hours, nothing is forwarded at all** when the window is enabled. The
-  message just sits in WhatsApp for a human in the morning. No "we're closed" auto-reply — that
-  was an explicit choice, not an omission, and it's a one-line change in `BusinessHours` if you
-  want the other behaviour.
+- **The schedule is "when nobody's free", not "business hours".** The point of the system is
+  covering the times the team can't get to WhatsApp — after hours *and* during the busy stretches
+  of the working day. During the calm stretches the bridge deliberately stays quiet, because
+  staff can see those messages themselves and a bot replying over them is worse than a slightly
+  slower human. See [Coverage windows](#coverage-windows).
 - **Groups are never auto-replied to**, at any setting. The Android switch only controls whether
   group messages get forwarded for logging.
 - **Dry-run is the default** and stays true until a human turns it off.
@@ -111,9 +142,14 @@ What that means in practice:
 - **The number can be banned, with little warning and no appeal you can rely on.** For a clinic
   the WhatsApp number *is* a patient channel, often the primary one. Losing it loses the chat
   history and every patient's ability to reach you at the number they've saved.
-- **Volume and pattern raise the risk.** Bursts, identical repeated text, replies at inhuman
-  speed at 3am, and messaging numbers that never messaged you first are the signals most likely
-  to draw enforcement. Business hours and dry-run mode reduce exposure; they don't remove it.
+- **Volume and pattern raise the risk**, and this system's schedule leans into the riskiest
+  pattern. Instant replies at 3am, to a first-time number, are close to a textbook automation
+  signature — bursts, identical repeated text, inhuman response latency and messaging numbers
+  that never messaged you first are the signals most likely to draw enforcement, and overnight
+  coverage plus an open allow-list hits three of the four. That is the direct cost of covering
+  off-hours, and it is worth accepting knowingly rather than discovering later. Dry-run mode is
+  the one lever that removes the exposure entirely; a deliberate short delay before sending
+  (rather than replying in under a second) is the cheapest way to soften the rest.
 - **This system does not make automated sending compliant.** The safety gates exist to stop the
   Routine saying something wrong to a patient. They are not a ToS workaround and don't make the
   automation authorised.

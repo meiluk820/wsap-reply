@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import java.time.LocalTime
+import com.clinic.wanotifybridge.util.ActiveSchedule
 
 /**
  * All user-configurable state, held in [EncryptedSharedPreferences].
@@ -30,28 +30,48 @@ class BridgeSettings private constructor(private val prefs: SharedPreferences) {
         get() = prefs.getBoolean(KEY_FORWARD_GROUPS, false)
         set(value) = prefs.edit().putBoolean(KEY_FORWARD_GROUPS, value).apply()
 
-    // --- Business hours -----------------------------------------------------------
+    // --- Schedule -----------------------------------------------------------------
+    // Forwarding is ON when nobody is free to answer: outside opening hours, on closed
+    // days, and during the peak windows inside opening hours. See [ActiveSchedule].
 
-    var businessHoursEnabled: Boolean
-        get() = prefs.getBoolean(KEY_HOURS_ENABLED, false)
-        set(value) = prefs.edit().putBoolean(KEY_HOURS_ENABLED, value).apply()
+    var scheduleEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SCHEDULE_ENABLED, true)
+        set(value) = prefs.edit().putBoolean(KEY_SCHEDULE_ENABLED, value).apply()
 
-    /** Minutes past midnight, local time. */
-    var businessStartMinute: Int
-        get() = prefs.getInt(KEY_HOURS_START, 9 * 60)
-        set(value) = prefs.edit().putInt(KEY_HOURS_START, value.coerceIn(0, 24 * 60)).apply()
-
-    var businessEndMinute: Int
-        get() = prefs.getInt(KEY_HOURS_END, 18 * 60)
-        set(value) = prefs.edit().putInt(KEY_HOURS_END, value.coerceIn(0, 24 * 60)).apply()
-
-    /** Days the window applies to, as [java.time.DayOfWeek.getValue] (1 = Monday). */
-    var businessDays: Set<Int>
-        get() = prefs.getStringSet(KEY_HOURS_DAYS, null)?.mapNotNull(String::toIntOrNull)?.toSet()
-            ?: setOf(1, 2, 3, 4, 5, 6)
+    /** Clinic opening time, minutes past midnight, local time. */
+    var openMinute: Int
+        get() = prefs.getInt(KEY_OPEN, ActiveSchedule.DEFAULT.openMinute)
         set(value) = prefs.edit()
-            .putStringSet(KEY_HOURS_DAYS, value.map(Int::toString).toSet())
+            .putInt(KEY_OPEN, value.coerceIn(0, ActiveSchedule.MINUTES_PER_DAY))
             .apply()
+
+    var closeMinute: Int
+        get() = prefs.getInt(KEY_CLOSE, ActiveSchedule.DEFAULT.closeMinute)
+        set(value) = prefs.edit()
+            .putInt(KEY_CLOSE, value.coerceIn(0, ActiveSchedule.MINUTES_PER_DAY))
+            .apply()
+
+    /** Days the clinic is open, as [java.time.DayOfWeek.getValue] (1 = Monday). */
+    var openDays: Set<Int>
+        get() = prefs.getStringSet(KEY_OPEN_DAYS, null)?.mapNotNull(String::toIntOrNull)?.toSet()
+            ?: ActiveSchedule.DEFAULT.openDays
+        set(value) = prefs.edit()
+            .putStringSet(KEY_OPEN_DAYS, value.map(Int::toString).toSet())
+            .apply()
+
+    /** Busy stretches within opening hours, as "HH:MM-HH:MM" lines. */
+    var peakWindowsText: String
+        get() = prefs.getString(KEY_PEAKS, null)
+            ?: ActiveSchedule.formatWindows(ActiveSchedule.DEFAULT.peakWindows)
+        set(value) = prefs.edit().putString(KEY_PEAKS, value).apply()
+
+    fun activeSchedule(): ActiveSchedule = ActiveSchedule(
+        enabled = scheduleEnabled,
+        openMinute = openMinute,
+        closeMinute = closeMinute,
+        openDays = openDays,
+        peakWindows = ActiveSchedule.parseWindows(peakWindowsText),
+    )
 
     // --- Allow / block lists ------------------------------------------------------
 
@@ -83,20 +103,17 @@ class BridgeSettings private constructor(private val prefs: SharedPreferences) {
 
     fun isConfigured(): Boolean = webhookUrl.startsWith("https://") && webhookSecret.isNotEmpty()
 
-    fun businessWindow(): Pair<LocalTime, LocalTime> =
-        LocalTime.ofSecondOfDay(businessStartMinute * 60L) to
-            LocalTime.ofSecondOfDay((businessEndMinute % (24 * 60)) * 60L)
-
     companion object {
         private const val FILE = "bridge_settings"
         private const val KEY_ENABLED = "enabled"
         private const val KEY_URL = "webhook_url"
         private const val KEY_SECRET = "webhook_secret"
         private const val KEY_FORWARD_GROUPS = "forward_groups"
-        private const val KEY_HOURS_ENABLED = "hours_enabled"
-        private const val KEY_HOURS_START = "hours_start"
-        private const val KEY_HOURS_END = "hours_end"
-        private const val KEY_HOURS_DAYS = "hours_days"
+        private const val KEY_SCHEDULE_ENABLED = "schedule_enabled"
+        private const val KEY_OPEN = "clinic_open"
+        private const val KEY_CLOSE = "clinic_close"
+        private const val KEY_OPEN_DAYS = "clinic_open_days"
+        private const val KEY_PEAKS = "peak_windows"
         private const val KEY_ALLOW = "allow_list"
         private const val KEY_BLOCK = "block_list"
 

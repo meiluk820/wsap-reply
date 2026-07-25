@@ -43,7 +43,31 @@ permanent failures (a 4xx that isn't 408/429 — wrong URL, wrong secret) are no
 | Bare `Photo` / `Missed voice call` / `voice message` bodies | Nothing to read. A caption *is* forwarded (`📷 Photo\nIs this tooth ok?`). |
 | Group chats | Unless you switch groups on; off by default. |
 | Block-listed senders | Always wins over the allow-list. |
-| Anything outside the business-hours window | When the window is enabled. |
+| Anything arriving in a quiet window | Staff can answer those themselves — see below. |
+
+### When the bridge is active
+
+Not "business hours" — the inverse. Forwarding runs when nobody is free to answer:
+
+- outside the clinic's opening hours;
+- all day on days the clinic is closed;
+- during the **peak windows** inside opening hours, when the team is with patients.
+
+During the calm stretches of the working day it stays quiet on purpose: staff can see those
+messages themselves, and a bot replying over someone who is sitting right there is worse than a
+slightly slower human.
+
+Configured as opening time, closing time, open days, and a list of peak windows. The settings
+screen previews the resulting active and quiet windows, so a mistyped window is obvious before it
+costs a day of coverage. Defaults are the clinic's real schedule — open 09:00–21:00 Mon–Sat, peaks
+`08:00-09:30`, `12:45-14:15`, `17:00-18:30`, `20:00-22:00` — which works out to active
+00:00–09:30, 12:45–14:15, 17:00–18:30 and 20:00–24:00.
+
+A malformed peak-window line is dropped rather than crashing. Worth knowing which way that fails:
+losing every peak window makes the bridge go **quiet** during opening hours, not spam — off-hours
+forwarding keeps working either way. That's what the preview is for.
+
+Turn the schedule switch off to forward around the clock.
 
 ### De-duplication
 
@@ -175,5 +199,5 @@ app/src/main/java/com/clinic/wanotifybridge/
 ├── service/BridgeForegroundService.kt persistent notification, keeps process alive
 ├── service/BootReceiver.kt     restart after reboot / app update
 ├── ui/MainActivity.kt          settings + the permission walkthrough
-└── util/                       BusinessHours, SenderFilter, FailureLog
+└── util/                       ActiveSchedule, SenderFilter, FailureLog
 ```

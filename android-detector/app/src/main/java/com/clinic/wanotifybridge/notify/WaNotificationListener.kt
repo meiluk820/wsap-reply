@@ -10,12 +10,12 @@ import com.clinic.wanotifybridge.data.BridgeSettings
 import com.clinic.wanotifybridge.data.ChatType
 import com.clinic.wanotifybridge.data.SourceApp
 import com.clinic.wanotifybridge.net.WebhookClient
-import com.clinic.wanotifybridge.util.BusinessHours
 import com.clinic.wanotifybridge.util.SenderFilter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 /**
  * The detector. Watches WhatsApp / WhatsApp Business notifications and forwards genuinely
@@ -57,13 +57,23 @@ class WaNotificationListener : NotificationListenerService() {
 
         if (event.chatType == ChatType.GROUP && !settings.forwardGroups) return
         if (!SenderFilter.isAllowed(settings, event)) return
-        if (!BusinessHours.isOpen(settings)) return
+        if (!isScheduleActive(settings)) return
         if (!deduper.markIfNew(event.dedupeKey())) return
 
         scope.launch {
             val delivered = WebhookClient.send(applicationContext, event)
             Log.i(TAG, "forwarded=${delivered} app=${event.app.wireName}")
         }
+    }
+
+    /**
+     * Evaluated against the message's arrival time, i.e. now. A peak window that ends while a
+     * POST is retrying does not cancel that POST — the message did arrive during the window.
+     */
+    private fun isScheduleActive(settings: BridgeSettings): Boolean {
+        val now = LocalDateTime.now()
+        return settings.activeSchedule()
+            .isActiveAt(now.dayOfWeek.value, now.hour * 60 + now.minute)
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {

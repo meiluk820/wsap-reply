@@ -50,7 +50,9 @@ import androidx.compose.ui.unit.dp
 import com.clinic.wanotifybridge.data.BridgeSettings
 import com.clinic.wanotifybridge.notify.WaNotificationListener
 import com.clinic.wanotifybridge.service.BridgeForegroundService
+import com.clinic.wanotifybridge.util.ActiveSchedule
 import com.clinic.wanotifybridge.util.FailureLog
+import com.clinic.wanotifybridge.util.TimeWindow
 import java.time.DayOfWeek
 
 class MainActivity : ComponentActivity() {
@@ -96,10 +98,11 @@ private fun SettingsScreen() {
     var secret by remember { mutableStateOf(settings.webhookSecret) }
     var secretVisible by remember { mutableStateOf(false) }
     var forwardGroups by remember { mutableStateOf(settings.forwardGroups) }
-    var hoursEnabled by remember { mutableStateOf(settings.businessHoursEnabled) }
-    var startText by remember { mutableStateOf(minutesToText(settings.businessStartMinute)) }
-    var endText by remember { mutableStateOf(minutesToText(settings.businessEndMinute)) }
-    var days by remember { mutableStateOf(settings.businessDays) }
+    var scheduleEnabled by remember { mutableStateOf(settings.scheduleEnabled) }
+    var openText by remember { mutableStateOf(TimeWindow.format(settings.openMinute)) }
+    var closeText by remember { mutableStateOf(TimeWindow.format(settings.closeMinute)) }
+    var days by remember { mutableStateOf(settings.openDays) }
+    var peaksText by remember { mutableStateOf(settings.peakWindowsText) }
     var allow by remember { mutableStateOf(settings.allowList.joinToString("\n")) }
     var block by remember { mutableStateOf(settings.blockList.joinToString("\n")) }
     var failures by remember { mutableStateOf(FailureLog.read(context)) }
@@ -180,35 +183,45 @@ private fun SettingsScreen() {
                 style = MaterialTheme.typography.bodySmall,
             )
 
-            SectionTitle("Business hours")
+            SectionTitle("When to forward")
             SwitchRow(
-                label = "Only forward during business hours",
-                checked = hoursEnabled,
-                onChange = { hoursEnabled = it },
+                label = "Use the schedule",
+                checked = scheduleEnabled,
+                onChange = { scheduleEnabled = it },
             )
-            if (hoursEnabled) {
+            Text(
+                "Forwarding runs when nobody is free to answer: outside opening hours, all " +
+                    "day on closed days, and during the peak windows below. Switch the " +
+                    "schedule off to forward around the clock.",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            if (scheduleEnabled) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
-                        value = startText,
-                        onValueChange = { startText = it },
-                        label = { Text("From (HH:MM)") },
+                        value = openText,
+                        onValueChange = { openText = it },
+                        label = { Text("Opens (HH:MM)") },
                         singleLine = true,
                         modifier = Modifier.weight(1f),
                     )
                     OutlinedTextField(
-                        value = endText,
-                        onValueChange = { endText = it },
-                        label = { Text("To (HH:MM)") },
+                        value = closeText,
+                        onValueChange = { closeText = it },
+                        label = { Text("Closes (HH:MM)") },
                         singleLine = true,
                         modifier = Modifier.weight(1f),
                     )
                 }
+                Text("Days the clinic is open:", style = MaterialTheme.typography.bodySmall)
                 DayPicker(days) { days = it }
-                Text(
-                    "Outside this window nothing is forwarded at all — the message stays " +
-                        "in WhatsApp for a human to handle the next morning.",
-                    style = MaterialTheme.typography.bodySmall,
+                OutlinedTextField(
+                    value = peaksText,
+                    onValueChange = { peaksText = it },
+                    label = { Text("Peak windows, one per line (HH:MM-HH:MM)") },
+                    minLines = 4,
+                    modifier = Modifier.fillMaxWidth(),
                 )
+                SchedulePreview(previewSchedule(openText, closeText, days, peaksText))
             }
 
             SectionTitle("Allow-list")
@@ -244,10 +257,11 @@ private fun SettingsScreen() {
                     settings.webhookUrl = url
                     settings.webhookSecret = secret
                     settings.forwardGroups = forwardGroups
-                    settings.businessHoursEnabled = hoursEnabled
-                    textToMinutes(startText)?.let { settings.businessStartMinute = it }
-                    textToMinutes(endText)?.let { settings.businessEndMinute = it }
-                    settings.businessDays = days
+                    settings.scheduleEnabled = scheduleEnabled
+                    ActiveSchedule.parseTime(openText)?.let { settings.openMinute = it }
+                    ActiveSchedule.parseTime(closeText)?.let { settings.closeMinute = it }
+                    settings.openDays = days
+                    settings.peakWindowsText = peaksText
                     settings.allowList = allow.lines()
                     settings.blockList = block.lines()
                     BridgeForegroundService.refresh(context)
@@ -373,6 +387,55 @@ private fun DayPicker(selected: Set<Int>, onChange: (Set<Int>) -> Unit) {
     }
 }
 
+/**
+ * Shows the schedule as the two things the operator actually cares about: when the bridge
+ * speaks, and when it stays out of the way. Both are derived, not entered — entering peak
+ * windows and reading back "quiet 09:30-12:45" is what catches a typo before it costs a day
+ * of missed messages.
+ */
+@Composable
+private fun SchedulePreview(schedule: ActiveSchedule) {
+    // Preview an open day; a closed day is trivially active for all 24 hours.
+    val sampleDay = schedule.openDays.minOrNull() ?: 1
+    val active = schedule.activeWindows(sampleDay)
+    val quiet = schedule.quietWindows(sampleDay)
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text("On an open day", fontWeight = FontWeight.SemiBold)
+            Text(
+                "Forwarding ON: " + if (active.isEmpty()) "never" else active.joinToString(", "),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                "Team handles it: " + if (quiet.isEmpty()) "never" else quiet.joinToString(", "),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                "On days the clinic is closed, forwarding runs all day.",
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+/** Builds a schedule from the current (possibly half-typed) field values, for the preview. */
+private fun previewSchedule(
+    openText: String,
+    closeText: String,
+    days: Set<Int>,
+    peaksText: String,
+): ActiveSchedule = ActiveSchedule(
+    enabled = true,
+    openMinute = ActiveSchedule.parseTime(openText) ?: ActiveSchedule.DEFAULT.openMinute,
+    closeMinute = ActiveSchedule.parseTime(closeText) ?: ActiveSchedule.DEFAULT.closeMinute,
+    openDays = days,
+    peakWindows = ActiveSchedule.parseWindows(peaksText),
+)
+
 @Composable
 private fun SectionTitle(text: String) {
     Text(text, style = MaterialTheme.typography.titleMedium)
@@ -414,14 +477,3 @@ private fun isIgnoringBatteryOptimizations(context: Context): Boolean {
     return pm.isIgnoringBatteryOptimizations(context.packageName)
 }
 
-private fun minutesToText(minutes: Int): String =
-    "%02d:%02d".format(minutes / 60, minutes % 60)
-
-private fun textToMinutes(text: String): Int? {
-    val parts = text.trim().split(':')
-    if (parts.size != 2) return null
-    val hour = parts[0].toIntOrNull() ?: return null
-    val minute = parts[1].toIntOrNull() ?: return null
-    if (hour !in 0..24 || minute !in 0..59) return null
-    return hour * 60 + minute
-}

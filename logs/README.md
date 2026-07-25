@@ -48,6 +48,7 @@ One row per webhook trigger, appended. Matches the pipe-table convention of the 
 | `skipped_group` | Group chat; log-only by policy |
 | `skipped_staff_replied` | A human answered in the thread within the staff-reply window |
 | `skipped_blocked` | Sender on the block-list, or off a non-empty allow-list |
+| `skipped_quiet_window` | Arrived during a calm stretch of the working day; staff handle it |
 | `needs_human_review` | Flagged for a person. `Reason` says which gate fired |
 | `rejected` | Bad shared secret, malformed payload, or stale timestamp |
 

@@ -13,21 +13,31 @@ section.
 
 ## Business hours
 
-<!-- TODO. Per branch if they differ. Include lunch closures and public-holiday policy, since
-     "are you open today?" is one of the most common messages. -->
+Opening hours are **9:00am – 9:00pm**, the same on every day the clinic is open. Confirm the days
+below — Mon–Sat is an assumption, and it also drives the bridge's schedule (on a day marked
+closed, the bridge forwards for the full 24 hours).
 
 | Day | Open | Close |
 |---|---|---|
-| Monday | TODO | TODO |
-| Tuesday | TODO | TODO |
-| Wednesday | TODO | TODO |
-| Thursday | TODO | TODO |
-| Friday | TODO | TODO |
-| Saturday | TODO | TODO |
-| Sunday | TODO | TODO |
+| Monday | 9:00am | 9:00pm |
+| Tuesday | 9:00am | 9:00pm |
+| Wednesday | 9:00am | 9:00pm |
+| Thursday | 9:00am | 9:00pm |
+| Friday | 9:00am | 9:00pm |
+| Saturday | 9:00am | 9:00pm |
+| Sunday | TODO — closed? | TODO |
 
 Public holidays: TODO
-Lunch break: TODO
+Lunch break: TODO — the 12:45–2:15pm peak window suggests the clinic stays open through lunch;
+say so explicitly if it does, since "are you open at lunch?" is a common question.
+
+<!-- Per branch if they differ — add a row set per branch and say which is which. -->
+
+### Peak hours (for reference, not for patients)
+
+8:00–9:30am · 12:45–2:15pm · 5:00–6:30pm · 8:00–10:00pm. These are when the team can't get to
+WhatsApp, and are why the bridge covers those windows. Never quote these to a patient as "busy
+times" unless you decide you want that.
 
 ## Branches
 

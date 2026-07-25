@@ -20,13 +20,44 @@ STAFF_REPLY_WINDOW_MINUTES = 30
 CONTEXT_MESSAGES_TO_READ   = 10        # read at least 5
 ALLOW_LIST                 = []        # empty = reply to everyone, including unknown numbers
 BLOCK_LIST                 = []        # always wins over ALLOW_LIST
+
+# Schedule — see "Coverage windows" below. Mirrors the Android app's settings.
+CLINIC_OPEN                = 09:00
+CLINIC_CLOSE               = 21:00
+CLINIC_OPEN_DAYS           = Mon,Tue,Wed,Thu,Fri,Sat
+PEAK_WINDOWS               = 08:00-09:30, 12:45-14:15, 17:00-18:30, 20:00-22:00
 ```
 
 `DRY_RUN = true` is the default and must stay that way until a batch of drafts has been read
 and approved by a human. Flipping it to `false` is a deliberate act by the operator, never
 something the Routine does to itself, and never something to suggest doing mid-run.
 
-**`ALLOW_LIST` is empty by design.** The operator's instruction is that unknown numbers should
+**### Coverage windows
+
+The Routine replies **when nobody at the clinic is free to answer** — which is the opposite of a
+business-hours filter:
+
+| When | Active? | Why |
+|---|---|---|
+| Outside `CLINIC_OPEN`–`CLINIC_CLOSE` | Yes | Nobody is there |
+| Days not in `CLINIC_OPEN_DAYS` | Yes, all day | Same |
+| Inside a `PEAK_WINDOWS` entry | Yes | Team is with patients and can't get to WhatsApp |
+| Any other time the clinic is open | **No** | Staff can see and answer it themselves |
+
+With the values above that works out to **active 00:00–09:30, 12:45–14:15, 17:00–18:30,
+20:00–24:00** on an open day, and quiet during 09:30–12:45, 14:15–17:00, 18:30–20:00.
+
+The Android app applies this too, so in normal operation a quiet-window message never reaches
+the webhook. Re-check it here anyway: a phone with a stale config, a manually fired Routine, or
+a replayed request would otherwise reply over a staff member who is sitting right there. If the
+message's `timestamp` falls in a quiet window, log `skipped_quiet_window` and stop.
+
+Note the interaction with the staff-reply gate — during peak windows the team is *busy*, not
+absent, so someone may still answer between the notification firing and this Routine reaching
+step 4. Gate #3 is what catches that, and it matters more here than it would in an
+off-hours-only design.
+
+`ALLOW_LIST` is empty by design.** The operator's instruction is that unknown numbers should
 receive a reply — a first-time patient messaging the clinic is the main case this system exists
 for. An empty allow-list therefore means *proceed for any sender*; adding entries narrows it.
 `BLOCK_LIST` is the real gate: put staff, suppliers, labs, family and the clinic's own numbers
@@ -84,6 +115,9 @@ Evaluate all of them. Any single hit means **log and stop** — no reply, no par
 4. **Sender is block-listed** (`BLOCK_LIST`), or `ALLOW_LIST` is non-empty and the sender is
    not on it. Match on name and on the last 8 digits of the number so
    `+60 12-345 6789` / `0123456789` / `60123456789` are treated as the same person.
+5. **The message arrived in a quiet window** — see "Coverage windows" above. Log
+   `skipped_quiet_window` and stop. Judge this on the payload's `timestamp`, not on the time the
+   Routine happens to run.
 
 ## 4. Read the thread
 

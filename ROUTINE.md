@@ -32,7 +32,7 @@ PEAK_WINDOWS               = 08:00-09:30, 12:45-14:15, 17:00-18:30, 20:00-22:00
 and approved by a human. Flipping it to `false` is a deliberate act by the operator, never
 something the Routine does to itself, and never something to suggest doing mid-run.
 
-**### Coverage windows
+### Coverage windows
 
 The Routine replies **when nobody at the clinic is free to answer** — which is the opposite of a
 business-hours filter:
@@ -57,7 +57,7 @@ absent, so someone may still answer between the notification firing and this Rou
 step 4. Gate #3 is what catches that, and it matters more here than it would in an
 off-hours-only design.
 
-`ALLOW_LIST` is empty by design.** The operator's instruction is that unknown numbers should
+**`ALLOW_LIST` is empty by design.** The operator's instruction is that unknown numbers should
 receive a reply — a first-time patient messaging the clinic is the main case this system exists
 for. An empty allow-list therefore means *proceed for any sender*; adding entries narrows it.
 `BLOCK_LIST` is the real gate: put staff, suppliers, labs, family and the clinic's own numbers

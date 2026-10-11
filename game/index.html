@@ -1,7 +1,6 @@
 <title>Dental Nurse Hero</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
 <style>
-/* Dark-first dental clinic game — single committed dark theme */
 :root {
   --bg: #0c1520; --card: #162233; --card2: #1e3048;
   --accent: #00bcd4; --accent2: #ff9800; --gold: #ffd700;
@@ -128,21 +127,32 @@ body {
 /* ===== POV VIEW ===== */
 .pov-area {
   flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 12px 16px; position: relative; overflow: hidden;
-  min-height: 200px;
+  padding: 8px 16px; position: relative; overflow: hidden;
+  min-height: 220px;
+  background: linear-gradient(180deg, #1a2636 0%, #0f1923 100%);
 }
-.pov-scene { width: 100%; max-width: 360px; height: 220px; position: relative; }
+.pov-scene { width: 100%; max-width: 380px; aspect-ratio: 16/11; position: relative; }
 
-/* Passing animation */
-.pov-tool-passing {
-  position: absolute; left: 50%; bottom: 30px;
-  transform: translateX(-50%); z-index: 5;
-  animation: passUp .6s ease forwards;
+.pov-status {
+  position: absolute; left: 50%; bottom: 38%;
+  transform: translateX(-50%);
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+  animation: pulse-text 1.5s ease infinite;
 }
-@keyframes passUp {
-  0% { bottom: 10px; opacity: .5; }
-  60% { bottom: 100px; opacity: 1; }
-  100% { bottom: 120px; opacity: 0; }
+@keyframes pulse-text { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+
+.pov-tool-fly {
+  position: absolute; left: 50%; bottom: 25%;
+  transform: translateX(-50%);
+  width: 48px; height: 48px;
+  z-index: 5;
+  animation: flyUp .55s ease-out forwards;
+}
+@keyframes flyUp {
+  0% { bottom: 18%; opacity: .6; transform: translateX(-50%) scale(.8); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+  100% { bottom: 60%; opacity: 0; transform: translateX(-50%) scale(.7); }
 }
 
 /* ===== TOOL TRAY ===== */
@@ -166,25 +176,49 @@ body {
 .tool-btn.bad { border-color: var(--red); background: rgba(229,57,53,.15); animation: shake .35s; }
 @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 
-/* ===== INFECTION CONTROL PHASE ===== */
-.ic-phase { flex: 1; display: flex; flex-direction: column; padding: 16px; }
-.ic-title { font-size: 15px; font-weight: 800; text-align: center; margin-bottom: 4px; }
-.ic-sub { font-size: 12px; color: var(--text2); text-align: center; margin-bottom: 12px; }
-.ic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; align-content: start; }
-.ic-btn {
-  display: flex; align-items: center; gap: 8px;
-  padding: 12px; background: var(--card2); border: 2px solid transparent;
-  border-radius: 10px; cursor: pointer; font-family: inherit;
-  font-size: 12px; font-weight: 700; color: var(--text);
-  transition: all .15s; min-height: 56px;
+/* ===== MORNING PREP & IC PHASE ===== */
+.prep-phase, .ic-phase {
+  flex: 1; display: flex; flex-direction: column; padding: 16px;
+  overflow-y: auto;
 }
-.ic-btn:active { transform: scale(.95); }
-.ic-btn .ic-icon { font-size: 22px; flex-shrink: 0; }
-.ic-btn.done { border-color: var(--green); background: rgba(67,160,71,.12); opacity: .6; pointer-events: none; }
-.ic-btn.wrong { border-color: var(--red); background: rgba(229,57,53,.12); animation: shake .35s; }
-.ic-step-counter {
+.prep-title, .ic-title {
+  font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 4px;
+}
+.prep-sub, .ic-sub {
+  font-size: 12px; color: var(--text2); text-align: center; margin-bottom: 12px;
+}
+.prep-grid, .ic-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  flex: 1; align-content: start;
+}
+.prep-btn, .ic-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; background: var(--card2); border: 2px solid transparent;
+  border-radius: 10px; cursor: pointer; font-family: inherit;
+  font-size: 11px; font-weight: 700; color: var(--text);
+  transition: all .15s; min-height: 48px;
+}
+.prep-btn:active, .ic-btn:active { transform: scale(.95); }
+.prep-btn .p-icon, .ic-btn .ic-icon { font-size: 20px; flex-shrink: 0; }
+.prep-btn.done, .ic-btn.done {
+  border-color: var(--green); background: rgba(67,160,71,.12);
+  opacity: .6; pointer-events: none;
+}
+.prep-btn.wrong, .ic-btn.wrong {
+  border-color: var(--red); background: rgba(229,57,53,.12);
+  animation: shake .35s;
+}
+.prep-counter, .ic-step-counter {
   text-align: center; font-size: 12px; color: var(--text2);
   margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--card2);
+}
+.prep-progress {
+  height: 4px; background: var(--card2); border-radius: 2px;
+  margin-bottom: 12px; overflow: hidden;
+}
+.prep-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--accent), var(--green));
+  border-radius: 2px; transition: width .4s ease;
 }
 
 /* ===== CALL AREA ===== */
@@ -328,6 +362,15 @@ body {
     <div class="pov-scene" id="povScene"></div>
   </div>
 
+  <!-- Morning Prep Phase -->
+  <div id="prepPhase" class="prep-phase" hidden>
+    <div class="prep-title">🏥 Sediakan Bilik Rawatan</div>
+    <div class="prep-sub">Ikut langkah untuk buka klinik hari ini</div>
+    <div class="prep-progress"><div class="prep-progress-fill" id="prepFill" style="width:0%"></div></div>
+    <div class="prep-grid" id="prepGrid"></div>
+    <div class="prep-counter" id="prepCounter">Langkah 1/15</div>
+  </div>
+
   <!-- Infection Control Phase -->
   <div id="icPhase" class="ic-phase" hidden>
     <div class="ic-title">🧤 Infection Control</div>
@@ -337,7 +380,7 @@ body {
   </div>
 
   <!-- Call area -->
-  <div id="callArea" class="call-area">
+  <div id="callArea" class="call-area" hidden>
     <div style="text-align:center;">
       <div class="wait-icon">🪑</div>
       <div style="font-size:13px; color:var(--text2);">Ruang menunggu penuh!</div>
@@ -365,8 +408,9 @@ body {
       <div class="sum-mood"><span>Mood akhir:</span><span id="sMoodE">😊</span><span id="sMoodT">Baik - 80%</span></div>
       <div class="sum-row"><span class="l">💰 Gaji hari ini</span><span class="v sal" id="sSalary">+RM0</span></div>
       <div class="sum-row"><span class="l">👥 Pesakit dirawat</span><span class="v" id="sPats">0</span></div>
-      <div class="sum-row"><span class="l">✅ Ketepatan</span><span class="v" id="sAcc">0%</span></div>
+      <div class="sum-row"><span class="l">✅ Ketepatan alat</span><span class="v" id="sAcc">0%</span></div>
       <div class="sum-row"><span class="l">🧤 Infection Control</span><span class="v" id="sIC">0%</span></div>
+      <div class="sum-row"><span class="l">🏥 Persediaan bilik</span><span class="v" id="sPrep">0%</span></div>
     </div>
     <div class="sum-actions">
       <button class="btn-share" id="btnShare">📤 Kongsi</button>
@@ -391,10 +435,10 @@ body {
 <div class="instr-overlay" id="instrOverlay">
   <div class="instr-card">
     <h2>📋 Cara Bermain</h2>
-    <div class="instr-item"><div class="instr-num">1</div><p><b>Panggil pesakit</b> dari ruang menunggu.</p></div>
-    <div class="instr-item"><div class="instr-num">2</div><p><b>Dr.AE akan arahkan</b> alat yang diperlukan. Dengar arahan!</p></div>
-    <div class="instr-item"><div class="instr-num">3</div><p><b>Pilih alat yang betul</b> dari tray — anda akan nampak tangan anda hulurkan alat kepada doktor.</p></div>
-    <div class="instr-item"><div class="instr-num">4</div><p><b>Selepas rawatan</b>, bersihkan kerusi dental dengan langkah infection control yang betul.</p></div>
+    <div class="instr-item"><div class="instr-num">1</div><p><b>Sediakan bilik rawatan</b> — buka lampu, aircon, bersihkan bilik dan sediakan peralatan.</p></div>
+    <div class="instr-item"><div class="instr-num">2</div><p><b>Panggil pesakit</b> dari ruang menunggu.</p></div>
+    <div class="instr-item"><div class="instr-num">3</div><p><b>Dr.AE akan arahkan</b> alat yang diperlukan. Pilih alat yang betul dari tray!</p></div>
+    <div class="instr-item"><div class="instr-num">4</div><p><b>Selepas rawatan</b>, bersihkan & disinfect kerusi dental (infection control).</p></div>
     <div class="instr-item"><div class="instr-num">5</div><p><b>Mood pesakit</b> turun jika lambat atau silap. Kumpul mata untuk naik pangkat!</p></div>
     <button class="btn-primary" id="btnInstr" style="margin-top:14px;">Faham! Jom mula! 💪</button>
   </div>
@@ -410,7 +454,7 @@ const SVG = {
   drill: `<svg viewBox="0 0 36 36"><rect x="8" y="14" width="20" height="8" rx="4" fill="#78909c"/><rect x="4" y="16" width="8" height="4" rx="2" fill="#546e7a"/><path d="M28 18 L34 16 L34 20 Z" fill="#455a64"/><circle cx="20" cy="18" r="1.5" fill="#b0bec5"/></svg>`,
   composite: `<svg viewBox="0 0 36 36"><rect x="14" y="4" width="8" height="24" rx="3" fill="#a1887f"/><rect x="15" y="6" width="6" height="8" rx="2" fill="#d7ccc8"/><path d="M16 28 L20 28 L18 34 Z" fill="#8d6e63"/><rect x="13" y="14" width="10" height="3" rx="1" fill="#795548"/></svg>`,
   curinglight: `<svg viewBox="0 0 36 36"><rect x="10" y="12" width="16" height="10" rx="3" fill="#5c6bc0"/><rect x="6" y="14" width="6" height="6" rx="2" fill="#3f51b5"/><rect x="26" y="15" width="6" height="4" rx="1" fill="#7986cb"/><circle cx="32" cy="17" r="2" fill="#ffeb3b" opacity=".8"/><rect x="16" y="22" width="4" height="10" rx="1.5" fill="#7986cb"/></svg>`,
-  cotton: `<svg viewBox="0 0 36 36"><ellipse cx="18" cy="18" rx="10" ry="7" fill="#f5f5f5"/><ellipse cx="18" cy="18" rx="10" ry="7" fill="none" stroke="#e0e0e0" stroke-width="1"/><path d="M10 16 Q14 12 18 14 Q22 12 26 16" stroke="#eeeeee" stroke-width=".8" fill="none"/><path d="M10 20 Q14 22 18 20 Q22 22 26 20" stroke="#eeeeee" stroke-width=".8" fill="none"/></svg>`,
+  cotton: `<svg viewBox="0 0 36 36"><ellipse cx="18" cy="18" rx="10" ry="7" fill="#f5f5f5"/><ellipse cx="18" cy="18" rx="10" ry="7" fill="none" stroke="#e0e0e0" stroke-width="1"/><path d="M10 16 Q14 12 18 14 Q22 12 26 16" stroke="#eee" stroke-width=".8" fill="none"/><path d="M10 20 Q14 22 18 20 Q22 22 26 20" stroke="#eee" stroke-width=".8" fill="none"/></svg>`,
   forceps: `<svg viewBox="0 0 36 36"><path d="M14 34 L16 18 Q12 10 10 4" stroke="#78909c" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M22 34 L20 18 Q24 10 26 4" stroke="#78909c" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M10 4 Q14 8 18 6 Q22 8 26 4" stroke="#546e7a" stroke-width="2" fill="none"/><circle cx="18" cy="18" r="2" fill="#607d8b"/></svg>`,
   elevator: `<svg viewBox="0 0 36 36"><rect x="15" y="16" width="6" height="18" rx="2" fill="#90a4ae"/><rect x="13" y="4" width="10" height="14" rx="2" fill="#607d8b"/><line x1="18" y1="6" x2="18" y2="16" stroke="#78909c" stroke-width="1.5"/></svg>`,
   impression: `<svg viewBox="0 0 36 36"><path d="M6 14 Q6 26 18 28 Q30 26 30 14" fill="none" stroke="#e91e63" stroke-width="2.5" stroke-linecap="round"/><path d="M8 14 L8 10 M12 14 L12 8 M16 14 L16 7 M20 14 L20 7 M24 14 L24 8 M28 14 L28 10" stroke="#f48fb1" stroke-width="1.5" stroke-linecap="round"/><rect x="4" y="12" width="28" height="4" rx="2" fill="#ec407a" opacity=".3"/></svg>`,
@@ -424,6 +468,25 @@ const TOOLS = [
   { id:'curinglight', name:'Lampu\nCuring' }, { id:'cotton', name:'Kapas' },
   { id:'forceps', name:'Forsep' }, { id:'elevator', name:'Elevator' },
   { id:'impression', name:'Acuan' }, { id:'fluoride', name:'Fluorida' },
+];
+
+/* ===== MORNING PREP STEPS (correct order) ===== */
+const PREP_STEPS = [
+  { id:'light', icon:'💡', label:'Pasang lampu bilik' },
+  { id:'aircon', icon:'❄️', label:'Hidupkan aircon' },
+  { id:'tv', icon:'📺', label:'Hidupkan TV' },
+  { id:'chair-on', icon:'🪑', label:'Hidupkan dental chair' },
+  { id:'sweep', icon:'🧹', label:'Sapu & mop lantai' },
+  { id:'wipe-table', icon:'🧽', label:'Lap meja' },
+  { id:'run-hp', icon:'🔧', label:'Jalankan handpiece' },
+  { id:'run-scaler', icon:'⚒️', label:'Jalankan skaler' },
+  { id:'flush', icon:'🚿', label:'Flush spittoon' },
+  { id:'disinfect', icon:'🧴', label:'Disinfect kerusi & handle' },
+  { id:'bio-bib', icon:'🛡️', label:'Letak bio cover & sedia bib' },
+  { id:'exam-set', icon:'🩺', label:'Sedia set pemeriksaan' },
+  { id:'saliva', icon:'💨', label:'Sedia saliva ejector' },
+  { id:'cup', icon:'🥤', label:'Sedia cup' },
+  { id:'glasses', icon:'🕶️', label:'Sedia cermin mata gelap' },
 ];
 
 const IC_STEPS = [
@@ -474,62 +537,128 @@ function resetState() {
     ok:0, bad:0, done:0, timer:null, tv:100,
     fastest:Infinity, t0:0, ts:0, first:true,
     salary:0, moodSum:0, procs:[],
-    icOk:0, icBad:0, icStep:0, phase:'call',
+    icOk:0, icBad:0, icStep:0,
+    prepOk:0, prepBad:0, prepStep:0,
+    phase:'prep',
   };
 }
 resetState();
 
+/* ===== POV RENDERING (improved) ===== */
 function renderPOV(toolId, status) {
   const sc = $('povScene');
-  const toolSvg = toolId ? SVG[toolId] : '';
-  const passingClass = status === 'passing' ? 'pov-tool-passing' : '';
 
   sc.innerHTML = `
-    <svg viewBox="0 0 360 220" width="100%" height="100%" style="display:block;">
-      <!-- Patient mouth area at top -->
-      <ellipse cx="180" cy="40" rx="50" ry="28" fill="#e8b4b8" opacity=".7"/>
-      <ellipse cx="180" cy="40" rx="38" ry="18" fill="#c62828" opacity=".5"/>
-      <path d="M150 35 Q155 30 160 33 Q165 28 170 32 Q175 28 180 32 Q185 28 190 32 Q195 28 200 33 Q205 30 210 35" fill="#f5f5f5" opacity=".8"/>
-      <path d="M155 47 Q160 52 165 48 Q170 53 175 49 Q180 53 185 49 Q190 53 195 48 Q200 52 205 47" fill="#f5f5f5" opacity=".8"/>
+    <svg viewBox="0 0 380 240" width="100%" height="100%" style="display:block;">
+      <defs>
+        <radialGradient id="lightGlow" cx="50%" cy="0%" r="60%">
+          <stop offset="0%" stop-color="#ffeb3b" stop-opacity=".12"/>
+          <stop offset="100%" stop-color="#ffeb3b" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="mouthGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#8b1a1a"/>
+          <stop offset="100%" stop-color="#5c1010"/>
+        </radialGradient>
+        <linearGradient id="gloveL" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#66bb6a"/>
+          <stop offset="100%" stop-color="#43a047"/>
+        </linearGradient>
+        <linearGradient id="skinGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#deb896"/>
+          <stop offset="100%" stop-color="#c9a07a"/>
+        </linearGradient>
+      </defs>
 
-      <!-- Dr.AE's hand reaching from upper-right -->
-      <g opacity=".85">
-        <path d="M310 20 Q280 50 260 80 Q250 95 255 100 Q260 105 270 95 Q280 80 300 55 L320 30 Z" fill="#d4a574"/>
-        <path d="M255 100 Q250 108 258 108 Q265 105 270 95" fill="#d4a574"/>
-        <text x="285" y="30" font-size="9" fill="#5c6bc0" font-weight="bold" text-anchor="middle">Dr.AE</text>
+      <!-- Operating light glow -->
+      <rect x="0" y="0" width="380" height="240" fill="url(#lightGlow)"/>
+
+      <!-- Dental overhead light -->
+      <ellipse cx="190" cy="6" rx="40" ry="5" fill="#455a64"/>
+      <rect x="170" y="2" width="40" height="8" rx="3" fill="#546e7a"/>
+      <ellipse cx="190" cy="10" rx="22" ry="3" fill="#fff9c4" opacity=".4"/>
+
+      <!-- Patient mouth (top-down view, cartoon style) -->
+      <g transform="translate(190,55)">
+        <!-- Lips outer -->
+        <ellipse cx="0" cy="0" rx="52" ry="32" fill="#e8a0a0"/>
+        <!-- Mouth opening -->
+        <ellipse cx="0" cy="0" rx="40" ry="24" fill="url(#mouthGrad)"/>
+        <!-- Upper teeth row -->
+        <g fill="#f5f0e8" stroke="#e0d8cc" stroke-width=".5">
+          <rect x="-32" y="-20" width="8" height="10" rx="2"/>
+          <rect x="-22" y="-22" width="8" height="12" rx="2"/>
+          <rect x="-12" y="-23" width="10" height="13" rx="2.5"/>
+          <rect x="2" y="-23" width="10" height="13" rx="2.5"/>
+          <rect x="14" y="-22" width="8" height="12" rx="2"/>
+          <rect x="24" y="-20" width="8" height="10" rx="2"/>
+        </g>
+        <!-- Lower teeth row -->
+        <g fill="#f5f0e8" stroke="#e0d8cc" stroke-width=".5">
+          <rect x="-30" y="10" width="7" height="9" rx="2"/>
+          <rect x="-21" y="11" width="7" height="10" rx="2"/>
+          <rect x="-12" y="12" width="9" height="10" rx="2.5"/>
+          <rect x="3" y="12" width="9" height="10" rx="2.5"/>
+          <rect x="14" y="11" width="7" height="10" rx="2"/>
+          <rect x="23" y="10" width="7" height="9" rx="2"/>
+        </g>
+        <!-- Tongue -->
+        <ellipse cx="0" cy="6" rx="18" ry="10" fill="#c0504d" opacity=".5"/>
       </g>
 
-      ${status === 'waiting' ? `
-      <!-- Waiting indicator -->
-      <text x="180" y="130" text-anchor="middle" font-size="12" fill="#7a8fa3" font-weight="bold">Menunggu alat...</text>
-      ` : ''}
-
-      <!-- Your gloved hands at bottom -->
+      <!-- Dr.AE hand from upper-right -->
       <g>
-        <!-- Left hand -->
-        <path d="M80 220 L75 180 Q70 160 85 155 Q95 152 100 160 L105 175 Q110 165 115 170 L110 190 L100 220 Z" fill="#a5d6a7"/>
-        <path d="M85 155 Q80 148 85 142 Q90 148 95 152" fill="#a5d6a7"/>
-        <path d="M95 152 Q92 144 97 138 Q102 144 100 152" fill="#a5d6a7"/>
-        <path d="M100 155 Q100 146 106 141 Q110 148 108 158" fill="#a5d6a7"/>
-        <!-- cuff -->
-        <rect x="70" y="210" width="40" height="14" rx="4" fill="#81c784"/>
-
-        <!-- Right hand -->
-        <path d="M280 220 L285 180 Q290 160 275 155 Q265 152 260 160 L255 175 Q250 165 245 170 L250 190 L260 220 Z" fill="#a5d6a7"/>
-        <path d="M275 155 Q280 148 275 142 Q270 148 265 152" fill="#a5d6a7"/>
-        <path d="M265 152 Q268 144 263 138 Q258 144 260 152" fill="#a5d6a7"/>
-        <path d="M260 155 Q260 146 254 141 Q250 148 252 158" fill="#a5d6a7"/>
-        <rect x="250" y="210" width="40" height="14" rx="4" fill="#81c784"/>
+        <!-- Arm with sleeve -->
+        <path d="M340 0 L310 40 Q295 65 285 80 L280 88 Q275 94 280 98 L290 95 Q300 85 315 55 L345 10 Z" fill="url(#skinGrad)"/>
+        <!-- Sleeve cuff -->
+        <path d="M335 5 L345 10 L340 0 L330 -2 Z" fill="#5c6bc0" opacity=".8"/>
+        <!-- Fingers -->
+        <path d="M280 88 Q276 95 280 100 Q285 98 290 95" fill="url(#skinGrad)"/>
+        <path d="M285 85 Q278 90 280 96" fill="url(#skinGrad)"/>
+        <!-- Label -->
+        <text x="320" y="18" font-size="9" fill="#7986cb" font-weight="800" text-anchor="middle" font-family="Nunito,sans-serif">Dr.AE</text>
       </g>
 
-      <!-- Tool in hand if holding -->
+      <!-- Nurse's LEFT gloved hand -->
+      <g transform="translate(95,240)">
+        <!-- Cuff -->
+        <rect x="-25" y="-18" width="50" height="18" rx="6" fill="#388e3c"/>
+        <!-- Palm -->
+        <path d="M-20 -18 L-22 -55 Q-22 -70 -10 -75 L10 -75 Q22 -70 22 -55 L20 -18 Z" fill="url(#gloveL)"/>
+        <!-- Thumb -->
+        <path d="M-22 -50 Q-32 -55 -34 -65 Q-33 -72 -26 -70 Q-22 -67 -22 -58" fill="url(#gloveL)"/>
+        <!-- Fingers -->
+        <path d="M-12 -75 Q-14 -85 -10 -90 Q-6 -85 -8 -75" fill="url(#gloveL)"/>
+        <path d="M-2 -75 Q-3 -88 2 -93 Q6 -88 4 -75" fill="url(#gloveL)"/>
+        <path d="M8 -75 Q8 -86 12 -90 Q16 -85 14 -75" fill="url(#gloveL)"/>
+        <path d="M17 -72 Q19 -80 22 -82 Q25 -78 22 -70" fill="url(#gloveL)"/>
+        <!-- Glove wrinkles -->
+        <path d="M-10 -40 Q0 -44 10 -40" stroke="#2e7d32" stroke-width=".6" fill="none" opacity=".4"/>
+        <path d="M-8 -50 Q2 -53 12 -50" stroke="#2e7d32" stroke-width=".6" fill="none" opacity=".3"/>
+      </g>
+
+      <!-- Nurse's RIGHT gloved hand -->
+      <g transform="translate(285,240)">
+        <rect x="-25" y="-18" width="50" height="18" rx="6" fill="#388e3c"/>
+        <path d="M-20 -18 L-22 -55 Q-22 -70 -10 -75 L10 -75 Q22 -70 22 -55 L20 -18 Z" fill="url(#gloveL)"/>
+        <path d="M22 -50 Q32 -55 34 -65 Q33 -72 26 -70 Q22 -67 22 -58" fill="url(#gloveL)"/>
+        <path d="M-12 -75 Q-14 -85 -10 -90 Q-6 -85 -8 -75" fill="url(#gloveL)"/>
+        <path d="M-2 -75 Q-3 -88 2 -93 Q6 -88 4 -75" fill="url(#gloveL)"/>
+        <path d="M8 -75 Q8 -86 12 -90 Q16 -85 14 -75" fill="url(#gloveL)"/>
+        <path d="M17 -72 Q19 -80 22 -82 Q25 -78 22 -70" fill="url(#gloveL)"/>
+        <path d="M-10 -40 Q0 -44 10 -40" stroke="#2e7d32" stroke-width=".6" fill="none" opacity=".4"/>
+        <path d="M-8 -50 Q2 -53 12 -50" stroke="#2e7d32" stroke-width=".6" fill="none" opacity=".3"/>
+      </g>
+
+      <!-- Tool held between hands -->
       ${toolId && status === 'holding' ? `
-        <g transform="translate(155,140) scale(1.8)">
+        <g transform="translate(162,148) scale(2)">
           ${SVG[toolId].replace(/<svg[^>]*>/, '').replace('</svg>', '')}
         </g>
       ` : ''}
     </svg>
-    ${toolId && status === 'passing' ? `<div class="${passingClass}" style="width:60px;height:60px;">${SVG[toolId]}</div>` : ''}
+
+    ${status === 'waiting' ? `<div class="pov-status">Menunggu alat...</div>` : ''}
+    ${toolId && status === 'passing' ? `<div class="pov-tool-fly">${SVG[toolId]}</div>` : ''}
   `;
 }
 
@@ -550,12 +679,15 @@ function show(id) {
   $(id).classList.add('active');
 }
 
+/* ===== GAME START ===== */
 $('btnStart').addEventListener('click', () => {
   const n = $('playerName').value.trim();
   S.name = n || 'Nurse Aini';
   S.score = 0; S.pi = 0; S.done = 0; S.ok = 0; S.bad = 0;
   S.fastest = Infinity; S.salary = 0; S.moodSum = 0;
   S.icOk = 0; S.icBad = 0;
+  S.prepOk = 0; S.prepBad = 0; S.prepStep = 0;
+  S.phase = 'prep';
   S.procs = shuffle([...PROCEDURES]).slice(0, S.maxP);
 
   $('dName').textContent = S.name;
@@ -566,11 +698,18 @@ $('btnStart').addEventListener('click', () => {
   show('gameScreen');
   renderTools();
 
-  if (S.first) { $('instrOverlay').classList.add('on'); S.first = false; }
+  if (S.first) {
+    $('instrOverlay').classList.add('on');
+    S.first = false;
+  } else {
+    startPrep();
+  }
 });
 
-$('btnInstr').addEventListener('click', () => $('instrOverlay').classList.remove('on'));
-
+$('btnInstr').addEventListener('click', () => {
+  $('instrOverlay').classList.remove('on');
+  startPrep();
+});
 $('btnCall').addEventListener('click', callPatient);
 $('btnDone').addEventListener('click', finishPatient);
 $('btnShare').addEventListener('click', shareResult);
@@ -578,6 +717,67 @@ $('btnAgain').addEventListener('click', () => { S.score = 0; show('startScreen')
 $('btnPromoOk').addEventListener('click', () => $('promoModal').classList.remove('on'));
 $('btnPromoShare').addEventListener('click', sharePromo);
 
+/* ===== MORNING PREP MINI-GAME ===== */
+function startPrep() {
+  S.phase = 'prep';
+  S.prepStep = 0;
+  $('callArea').hidden = true;
+  $('prepPhase').hidden = false;
+  renderPrep();
+}
+
+function renderPrep() {
+  const g = $('prepGrid');
+  g.innerHTML = '';
+  const shuffled = shuffle([...PREP_STEPS]);
+  shuffled.forEach(step => {
+    const btn = document.createElement('button');
+    btn.className = 'prep-btn';
+    btn.dataset.id = step.id;
+    btn.innerHTML = `<span class="p-icon">${step.icon}</span><span>${step.label}</span>`;
+    btn.addEventListener('click', () => pickPrep(step.id, btn));
+    g.appendChild(btn);
+  });
+  updatePrepUI();
+}
+
+function pickPrep(id, btn) {
+  const expected = PREP_STEPS[S.prepStep];
+  if (id === expected.id) {
+    S.prepOk++;
+    S.score += 3;
+    $('dScore').textContent = S.score;
+    btn.classList.add('done');
+    fb('✓','ok');
+    S.prepStep++;
+    updatePrepUI();
+
+    if (S.prepStep >= PREP_STEPS.length) {
+      setTimeout(endPrep, 500);
+    }
+  } else {
+    S.prepBad++;
+    btn.classList.add('wrong');
+    fb('✗','bad');
+    setTimeout(() => btn.classList.remove('wrong'), 400);
+  }
+}
+
+function updatePrepUI() {
+  const pct = Math.round((S.prepStep / PREP_STEPS.length) * 100);
+  $('prepFill').style.width = pct + '%';
+  $('prepCounter').textContent = S.prepStep < PREP_STEPS.length
+    ? `Langkah ${S.prepStep + 1}/${PREP_STEPS.length}`
+    : 'Bilik rawatan sedia! ✅';
+}
+
+function endPrep() {
+  $('prepPhase').hidden = true;
+  S.phase = 'call';
+  $('callArea').hidden = false;
+}
+
+/* ===== CALL PATIENT ===== */
 function callPatient() {
   if (S.pi >= S.procs.length) { endDay(); return; }
   const p = S.procs[S.pi];
@@ -695,9 +895,9 @@ function pickIC(id, btn) {
   const expected = IC_STEPS[S.icStep];
   if (id === expected.id) {
     S.icOk++;
-    btn.classList.add('done');
     S.score += 5;
     $('dScore').textContent = S.score;
+    btn.classList.add('done');
     fb('✓','ok');
     S.icStep++;
     $('icCounter').textContent = S.icStep < IC_STEPS.length
@@ -777,6 +977,7 @@ function endDay() {
   const tot = S.ok + S.bad, acc = tot > 0 ? Math.round(S.ok / tot * 100) : 0;
   const avg = S.done > 0 ? Math.round(S.moodSum / S.done) : 0;
   const icTot = S.icOk + S.icBad, icAcc = icTot > 0 ? Math.round(S.icOk / icTot * 100) : 0;
+  const prepTot = S.prepOk + S.prepBad, prepAcc = prepTot > 0 ? Math.round(S.prepOk / prepTot * 100) : 0;
 
   let stars = 1;
   if (acc >= 90 && avg >= 70) stars = 3;
@@ -788,6 +989,7 @@ function endDay() {
   $('sPats').textContent = S.done;
   $('sAcc').textContent = acc + '%';
   $('sIC').textContent = icAcc + '%';
+  $('sPrep').textContent = prepAcc + '%';
 
   let me = '😊', mt = `Baik - ${avg}%`;
   if (avg < 40) { me = '😟'; mt = `Kurang - ${avg}%`; }
@@ -799,7 +1001,8 @@ function endDay() {
 
 function shareResult() {
   const tot = S.ok + S.bad, acc = tot > 0 ? Math.round(S.ok / tot * 100) : 0;
-  const t = `🦷 Dental Nurse Hero\n\n⭐ ${S.score} Mata\n💰 Gaji: RM${S.salary}\n✅ Ketepatan: ${acc}%\n👥 ${S.done} pesakit\n🧤 IC: ${Math.round(S.icOk/(S.icOk+S.icBad||1)*100)}%\n🏅 ${RANKS[S.rank].title}\n\n#DentalNurseHero`;
+  const prepTot = S.prepOk + S.prepBad, prepAcc = prepTot > 0 ? Math.round(S.prepOk / prepTot * 100) : 0;
+  const t = `🦷 Dental Nurse Hero\n\n⭐ ${S.score} Mata\n💰 Gaji: RM${S.salary}\n✅ Ketepatan: ${acc}%\n👥 ${S.done} pesakit\n🧤 IC: ${Math.round(S.icOk/(S.icOk+S.icBad||1)*100)}%\n🏥 Persediaan: ${prepAcc}%\n🏅 ${RANKS[S.rank].title}\n\n#DentalNurseHero`;
   doShare(t);
 }
 function sharePromo() {

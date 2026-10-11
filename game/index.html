@@ -1,1329 +1,817 @@
-<!DOCTYPE html>
-<html lang="ms">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Dental Nurse Hero</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
-
+/* Dark-first dental clinic game — single committed dark theme */
+:root {
+  --bg: #0c1520; --card: #162233; --card2: #1e3048;
+  --accent: #00bcd4; --accent2: #ff9800; --gold: #ffd700;
+  --green: #43a047; --red: #e53935; --pink: #ec407a;
+  --text: #e4eaf0; --text2: #7a8fa3; --white: #fff;
+  color-scheme: dark;
+}
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg); color: var(--text);
+  overflow-x: hidden; touch-action: manipulation;
+  padding-block: 0;
+}
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-:root {
-  --bg: #0f1923;
-  --card: #1a2a3a;
-  --card2: #243447;
-  --accent: #00bcd4;
-  --accent2: #ff9800;
-  --gold: #ffd700;
-  --green: #4caf50;
-  --red: #f44336;
-  --pink: #e91e63;
-  --text: #e8edf2;
-  --text2: #8899aa;
-  --white: #ffffff;
-}
-
-html, body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-  min-height: 100vh;
-  touch-action: manipulation;
-}
-
-.screen { display: none; min-height: 100vh; }
+.screen { display: none; min-height: 100vh; min-height: 100dvh; }
 .screen.active { display: flex; flex-direction: column; }
 
-/* ===== START SCREEN ===== */
+/* ===== START ===== */
 #startScreen {
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  text-align: center;
-  background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0a1628 100%);
+  align-items: center; justify-content: center;
+  padding: 24px; text-align: center;
+  background: radial-gradient(ellipse at 50% 30%, #162844 0%, var(--bg) 70%);
 }
-
-.logo-area { margin-bottom: 30px; }
-
 .logo-icon {
-  width: 120px; height: 120px;
-  background: linear-gradient(135deg, var(--accent), #0097a7);
-  border-radius: 30px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 16px;
-  font-size: 60px;
-  box-shadow: 0 8px 32px rgba(0, 188, 212, 0.3);
+  width: 110px; height: 110px;
+  background: linear-gradient(140deg, var(--accent), #00838f);
+  border-radius: 28px; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px; box-shadow: 0 6px 28px rgba(0,188,212,.3);
 }
-
+.logo-icon svg { width: 64px; height: 64px; }
 .logo-title {
-  font-size: 32px; font-weight: 900;
+  font-size: 28px; font-weight: 900;
   background: linear-gradient(135deg, var(--accent), var(--gold));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
+.logo-sub { font-size: 13px; color: var(--text2); margin: 4px 0 28px; }
 
-.logo-sub { font-size: 14px; color: var(--text2); margin-top: 4px; }
-
-.name-input-area { width: 100%; max-width: 320px; margin-bottom: 24px; }
-
-.name-input-area label {
-  display: block; font-size: 14px; color: var(--text2);
-  margin-bottom: 8px; text-align: left;
-}
-
+.name-area { width: 100%; max-width: 300px; margin-bottom: 20px; text-align: left; }
+.name-area label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
 .name-input {
-  width: 100%; padding: 14px 16px;
-  background: var(--card); border: 2px solid var(--card2);
-  border-radius: 12px; color: var(--text);
-  font-family: 'Nunito', sans-serif; font-size: 16px;
-  outline: none; transition: border-color 0.2s;
+  width: 100%; padding: 13px 14px; background: var(--card); border: 2px solid var(--card2);
+  border-radius: 10px; color: var(--text); font-family: inherit; font-size: 15px; outline: none;
 }
-
 .name-input:focus { border-color: var(--accent); }
 
-.btn-start {
-  width: 100%; max-width: 320px;
-  padding: 16px; border: none; border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), #0097a7);
-  color: var(--white); font-family: 'Nunito', sans-serif;
-  font-size: 18px; font-weight: 800; cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 188, 212, 0.4);
-  transition: transform 0.1s;
+.btn-primary {
+  width: 100%; max-width: 300px; padding: 15px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #00838f);
+  color: var(--white); font-family: inherit; font-size: 17px; font-weight: 800;
+  cursor: pointer; box-shadow: 0 4px 18px rgba(0,188,212,.35);
 }
+.btn-primary:active { transform: scale(.97); }
 
-.btn-start:active { transform: scale(0.96); }
-
-/* ===== GAME SCREEN ===== */
-#gameScreen { background: var(--bg); }
-
+/* ===== TOP BAR ===== */
 .top-bar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; background: var(--card);
+  padding: 10px 16px; background: var(--card);
   border-bottom: 1px solid var(--card2);
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
 }
-
-.top-bar-left { display: flex; align-items: center; gap: 8px; }
-
-.nurse-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
+.top-left { display: flex; align-items: center; gap: 8px; }
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), var(--pink));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
-
-.nurse-info .nurse-name { font-size: 13px; font-weight: 700; }
-.nurse-info .nurse-rank { font-size: 11px; color: var(--accent); }
-
-.top-bar-right { display: flex; align-items: center; gap: 12px; }
-
-.score-badge {
-  background: var(--card2); padding: 4px 12px;
-  border-radius: 20px; font-size: 13px; font-weight: 700;
+.info .name { font-size: 12px; font-weight: 700; }
+.info .rank { font-size: 10px; color: var(--accent); }
+.top-right { display: flex; align-items: center; gap: 10px; }
+.score-pill {
+  background: var(--card2); padding: 3px 10px; border-radius: 16px;
+  font-size: 12px; font-weight: 700;
 }
+.score-pill span { color: var(--gold); }
+.pat-count { font-size: 11px; color: var(--text2); }
 
-.score-badge span { color: var(--gold); }
-
-.patient-counter {
-  font-size: 12px; color: var(--text2);
+/* ===== PATIENT BAR ===== */
+.pat-bar {
+  padding: 10px 16px; background: var(--card2);
+  border-bottom: 1px solid rgba(255,255,255,.04);
 }
-
-/* Patient Info Bar */
-.patient-bar {
-  padding: 12px 16px;
-  background: linear-gradient(135deg, var(--card2), var(--card));
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+.pat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.pat-id { font-size: 12px; font-weight: 700; }
+.pat-prog { font-size: 11px; padding: 2px 8px; background: var(--accent); border-radius: 8px; color: var(--bg); font-weight: 700; }
+.pat-complaint {
+  font-size: 12px; color: var(--text2); padding: 6px 10px;
+  background: rgba(0,0,0,.2); border-radius: 6px; border-left: 3px solid var(--accent2);
 }
+.pat-complaint b { color: var(--accent2); }
 
-.patient-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.patient-id { font-size: 13px; font-weight: 700; }
-
-.problems-count {
-  font-size: 12px; padding: 2px 10px;
-  background: var(--accent); border-radius: 10px;
-  color: var(--bg); font-weight: 700;
-}
-
-.patient-complaint {
-  font-size: 13px; color: var(--text2);
-  padding: 8px 12px; background: rgba(0,0,0,0.2);
-  border-radius: 8px; border-left: 3px solid var(--accent2);
-}
-
-.patient-complaint strong { color: var(--accent2); }
-
-/* Mood Bar */
-.mood-bar-container {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 16px; font-size: 12px;
-}
-
-.mood-label { color: var(--text2); white-space: nowrap; }
-
-.mood-bar-track {
-  flex: 1; height: 8px; background: var(--card2);
-  border-radius: 4px; overflow: hidden;
-}
-
-.mood-bar-fill {
-  height: 100%; border-radius: 4px;
+/* Mood */
+.mood-row { display: flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 11px; }
+.mood-label { color: var(--text2); }
+.mood-track { flex: 1; height: 6px; background: var(--card2); border-radius: 3px; overflow: hidden; }
+.mood-fill {
+  height: 100%; border-radius: 3px;
   background: linear-gradient(90deg, var(--red), var(--accent2), var(--green));
-  transition: width 0.5s ease;
+  transition: width .4s;
 }
 
-.mood-emoji { font-size: 18px; }
-
-/* Dentist Speech */
-.dentist-area {
-  padding: 12px 16px;
-  display: flex; align-items: flex-start; gap: 10px;
-}
-
-.dentist-avatar {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: linear-gradient(135deg, #7c4dff, #536dfe);
+/* Dr speech */
+.dr-area { padding: 10px 16px; display: flex; gap: 8px; align-items: flex-start; }
+.dr-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #5c6bc0, #3949ab);
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; flex-shrink: 0;
+  font-size: 18px; flex-shrink: 0;
 }
-
-.dentist-bubble {
-  background: var(--card2); border-radius: 4px 16px 16px 16px;
-  padding: 12px 16px; font-size: 14px; font-weight: 600;
-  flex: 1; position: relative;
-  animation: bubblePop 0.3s ease;
+.dr-bubble {
+  background: var(--card2); border-radius: 4px 14px 14px 14px;
+  padding: 10px 14px; font-size: 13px; font-weight: 600; flex: 1;
+  animation: pop .25s ease;
 }
-
-@keyframes bubblePop {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.dentist-name { font-size: 11px; color: #7c4dff; margin-bottom: 4px; }
+@keyframes pop { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.dr-label { font-size: 10px; color: #5c6bc0; margin-bottom: 3px; }
 
 /* Timer */
-.timer-bar {
-  height: 4px; background: var(--card2);
-  margin: 0 16px;
-}
-
-.timer-fill {
-  height: 100%; background: var(--green);
-  transition: width 0.1s linear, background-color 0.3s;
-  border-radius: 2px;
-}
-
-.timer-fill.warning { background: var(--accent2); }
+.timer-bar { height: 3px; background: var(--card2); margin: 0 16px; }
+.timer-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width .1s linear, background-color .3s; }
+.timer-fill.warn { background: var(--accent2); }
 .timer-fill.danger { background: var(--red); }
 
-/* Dental View */
-.dental-view {
+/* ===== POV VIEW ===== */
+.pov-area {
   flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 16px; position: relative;
+  padding: 12px 16px; position: relative; overflow: hidden;
+  min-height: 200px;
+}
+.pov-scene { width: 100%; max-width: 360px; height: 220px; position: relative; }
+
+/* Passing animation */
+.pov-tool-passing {
+  position: absolute; left: 50%; bottom: 30px;
+  transform: translateX(-50%); z-index: 5;
+  animation: passUp .6s ease forwards;
+}
+@keyframes passUp {
+  0% { bottom: 10px; opacity: .5; }
+  60% { bottom: 100px; opacity: 1; }
+  100% { bottom: 120px; opacity: 0; }
 }
 
-.mouth-container {
-  width: 280px; height: 200px;
-  position: relative;
-}
-
-.tooth {
-  position: absolute;
-  width: 28px; height: 28px;
-  background: #f5f0e8;
-  border: 2px solid #d4c9b8;
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; color: #666;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.tooth.active {
-  background: var(--accent2);
-  border-color: var(--accent2);
-  color: var(--white);
-  animation: toothPulse 1s ease infinite;
-  box-shadow: 0 0 12px rgba(255, 152, 0, 0.5);
-}
-
-.tooth.treated {
-  background: var(--green);
-  border-color: var(--green);
-  color: var(--white);
-}
-
-@keyframes toothPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-/* Upper arch */
-.upper-arch { position: relative; width: 100%; height: 50%; }
-.lower-arch { position: relative; width: 100%; height: 50%; }
-
-/* Feedback overlay */
-.feedback {
-  position: fixed; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 48px; font-weight: 900;
-  pointer-events: none; z-index: 100;
-  animation: feedbackAnim 0.8s ease forwards;
-}
-
-@keyframes feedbackAnim {
-  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
-  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-  100% { opacity: 0; transform: translate(-50%, -80%) scale(1); }
-}
-
-.feedback.correct { color: var(--green); }
-.feedback.wrong { color: var(--red); }
-
-.points-popup {
-  position: fixed;
-  font-size: 24px; font-weight: 900;
-  pointer-events: none; z-index: 100;
-  animation: pointsFloat 1s ease forwards;
-}
-
-@keyframes pointsFloat {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-60px); }
-}
-
-/* Tool Tray */
-.tool-tray {
-  padding: 8px 12px 20px;
-  background: var(--card);
+/* ===== TOOL TRAY ===== */
+.tray {
+  padding: 6px 10px 16px; background: var(--card);
   border-top: 1px solid var(--card2);
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
 }
-
-.tray-label {
-  font-size: 11px; color: var(--text2);
-  text-transform: uppercase; letter-spacing: 1px;
-  margin-bottom: 8px; padding-left: 4px;
-}
-
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
+.tray-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; padding-left: 4px; }
+.tray-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .tool-btn {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 4px;
-  padding: 10px 4px;
-  background: var(--card2);
-  border: 2px solid transparent;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-  -webkit-user-select: none; user-select: none;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 8px 2px; background: var(--card2); border: 2px solid transparent;
+  border-radius: 10px; cursor: pointer; -webkit-user-select: none; user-select: none;
+  transition: all .12s;
+}
+.tool-btn:active { transform: scale(.93); }
+.tool-btn svg { width: 36px; height: 36px; }
+.tool-btn .t-name { font-size: 9px; font-weight: 700; color: var(--text2); text-align: center; line-height: 1.15; }
+.tool-btn.ok { border-color: var(--green); background: rgba(67,160,71,.15); }
+.tool-btn.bad { border-color: var(--red); background: rgba(229,57,53,.15); animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+
+/* ===== INFECTION CONTROL PHASE ===== */
+.ic-phase { flex: 1; display: flex; flex-direction: column; padding: 16px; }
+.ic-title { font-size: 15px; font-weight: 800; text-align: center; margin-bottom: 4px; }
+.ic-sub { font-size: 12px; color: var(--text2); text-align: center; margin-bottom: 12px; }
+.ic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; align-content: start; }
+.ic-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px; background: var(--card2); border: 2px solid transparent;
+  border-radius: 10px; cursor: pointer; font-family: inherit;
+  font-size: 12px; font-weight: 700; color: var(--text);
+  transition: all .15s; min-height: 56px;
+}
+.ic-btn:active { transform: scale(.95); }
+.ic-btn .ic-icon { font-size: 22px; flex-shrink: 0; }
+.ic-btn.done { border-color: var(--green); background: rgba(67,160,71,.12); opacity: .6; pointer-events: none; }
+.ic-btn.wrong { border-color: var(--red); background: rgba(229,57,53,.12); animation: shake .35s; }
+.ic-step-counter {
+  text-align: center; font-size: 12px; color: var(--text2);
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--card2);
 }
 
-.tool-btn:active { transform: scale(0.92); }
-
-.tool-btn .tool-icon { font-size: 24px; }
-
-.tool-btn .tool-name {
-  font-size: 10px; font-weight: 700;
-  color: var(--text2); text-align: center;
-  line-height: 1.2;
-}
-
-.tool-btn.highlight {
-  border-color: var(--accent);
-  background: rgba(0, 188, 212, 0.1);
-  animation: toolGlow 1.5s ease infinite;
-}
-
-@keyframes toolGlow {
-  0%, 100% { box-shadow: 0 0 0 rgba(0, 188, 212, 0); }
-  50% { box-shadow: 0 0 16px rgba(0, 188, 212, 0.3); }
-}
-
-.tool-btn.correct-flash {
-  border-color: var(--green);
-  background: rgba(76, 175, 80, 0.2);
-}
-
-.tool-btn.wrong-flash {
-  border-color: var(--red);
-  background: rgba(244, 67, 54, 0.2);
-  animation: shake 0.4s ease;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
-}
-
-/* Call Patient Button */
-.call-patient-area {
-  flex: 1; display: flex;
-  align-items: center; justify-content: center;
-  padding: 20px;
-}
-
+/* ===== CALL AREA ===== */
+.call-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.call-area .wait-icon { font-size: 44px; margin-bottom: 10px; animation: bob 2s ease infinite; }
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 .btn-call {
-  padding: 16px 40px; border: none; border-radius: 14px;
-  background: linear-gradient(135deg, var(--green), #388e3c);
-  color: var(--white); font-family: 'Nunito', sans-serif;
-  font-size: 16px; font-weight: 800; cursor: pointer;
-  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
-  transition: transform 0.1s;
+  padding: 14px 36px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--green), #2e7d32);
+  color: var(--white); font-family: inherit; font-size: 15px; font-weight: 800;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(67,160,71,.35); margin-top: 14px;
 }
-
-.btn-call:active { transform: scale(0.96); }
-
-/* Complete Button */
+.btn-call:active { transform: scale(.97); }
 .btn-complete {
-  margin: 0 16px 8px;
-  padding: 14px; border: none; border-radius: 12px;
-  background: linear-gradient(135deg, var(--green), #388e3c);
-  color: var(--white); font-family: 'Nunito', sans-serif;
-  font-size: 15px; font-weight: 800; cursor: pointer;
-  display: none;
+  margin: 0 16px 8px; padding: 13px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--green), #2e7d32);
+  color: var(--white); font-family: inherit; font-size: 14px; font-weight: 800;
+  cursor: pointer;
 }
+.btn-complete:active { transform: scale(.97); }
 
-.btn-complete:active { transform: scale(0.96); }
+/* ===== FEEDBACK ===== */
+.fb {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-size: 44px; font-weight: 900; pointer-events: none; z-index: 100;
+  animation: fbAnim .7s ease forwards;
+}
+@keyframes fbAnim {
+  0% { opacity: 1; transform: translate(-50%,-50%) scale(.5); }
+  50% { opacity: 1; transform: translate(-50%,-50%) scale(1.15); }
+  100% { opacity: 0; transform: translate(-50%,-70%) scale(1); }
+}
+.fb.ok { color: var(--green); } .fb.bad { color: var(--red); }
+.pts {
+  position: fixed; font-size: 20px; font-weight: 900;
+  pointer-events: none; z-index: 100; animation: ptsUp .8s ease forwards;
+}
+@keyframes ptsUp { to { opacity: 0; transform: translateY(-50px); } }
 
-/* ===== SUMMARY SCREEN ===== */
+/* ===== SUMMARY ===== */
 #summaryScreen {
-  align-items: center; justify-content: center;
-  padding: 20px; text-align: center;
-  background: linear-gradient(135deg, #0a1628, #1a2a4a);
+  align-items: center; justify-content: center; padding: 20px;
+  background: radial-gradient(ellipse at 50% 40%, #162844, var(--bg));
 }
-
-.summary-card {
-  width: 100%; max-width: 360px;
-  background: linear-gradient(135deg, var(--card), var(--card2));
-  border-radius: 20px; overflow: hidden;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+.sum-card { width: 100%; max-width: 340px; background: var(--card); border-radius: 18px; overflow: hidden; box-shadow: 0 8px 36px rgba(0,0,0,.5); }
+.sum-head { padding: 22px 18px 14px; background: linear-gradient(135deg, var(--accent), #00838f); text-align: center; }
+.sum-stars { font-size: 32px; margin-bottom: 6px; }
+.sum-score { font-size: 44px; font-weight: 900; color: var(--white); }
+.sum-mata { font-size: 13px; color: rgba(255,255,255,.75); text-transform: uppercase; letter-spacing: 2px; }
+.sum-body { padding: 16px; }
+.sum-mood { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; margin-bottom: 10px; background: rgba(0,0,0,.2); border-radius: 10px; font-size: 13px; }
+.sum-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.04); font-size: 13px; }
+.sum-row:last-child { border: none; }
+.sum-row .l { color: var(--text2); } .sum-row .v { font-weight: 700; }
+.sum-row .v.sal { color: var(--green); }
+.sum-actions { display: flex; gap: 8px; padding: 14px 16px; }
+.sum-actions button {
+  flex: 1; padding: 12px; border: none; border-radius: 10px;
+  font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
 }
+.btn-share { background: var(--card2); color: var(--text); }
+.btn-again { background: linear-gradient(135deg, var(--accent), #00838f); color: var(--white); }
 
-.summary-header {
-  padding: 24px 20px 16px;
-  background: linear-gradient(135deg, var(--accent), #0097a7);
-}
+/* ===== MODAL ===== */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.8); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.modal.on { display: flex; }
+.promo { width: 100%; max-width: 320px; background: var(--card); border-radius: 18px; overflow: hidden; animation: pop .35s ease; text-align: center; }
+.promo-head { padding: 20px; background: linear-gradient(135deg, var(--gold), var(--accent2)); }
+.promo-head .icon { font-size: 44px; margin-bottom: 6px; }
+.promo-head .tag { font-size: 11px; font-weight: 800; color: rgba(0,0,0,.5); text-transform: uppercase; letter-spacing: 2px; }
+.promo-head .rank { font-size: 20px; font-weight: 900; color: var(--bg); margin-top: 4px; }
+.promo-body { padding: 16px; text-align: left; }
+.promo-body p { font-size: 12px; color: var(--text2); margin-bottom: 10px; text-align: center; }
+.promo-body b { color: var(--text); }
+.promo-perks { list-style: none; }
+.promo-perks li { font-size: 12px; padding: 4px 0; }
+.promo-foot { display: flex; gap: 8px; padding: 12px 16px; }
+.promo-foot button { flex: 1; padding: 11px; border: none; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
 
-.summary-stars { font-size: 36px; margin-bottom: 8px; }
-
-.summary-score {
-  font-size: 48px; font-weight: 900; color: var(--white);
-}
-
-.summary-score-label {
-  font-size: 14px; color: rgba(255,255,255,0.8);
-  text-transform: uppercase; letter-spacing: 2px;
-}
-
-.summary-body { padding: 20px; }
-
-.summary-row {
-  display: flex; justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  font-size: 14px;
-}
-
-.summary-row:last-child { border: none; }
-
-.summary-row .label { color: var(--text2); }
-
-.summary-row .value { font-weight: 700; }
-
-.summary-row .value.salary { color: var(--green); }
-
-.summary-mood {
-  display: flex; align-items: center; justify-content: center;
-  gap: 8px; padding: 12px; margin: 12px 0;
-  background: rgba(0,0,0,0.2); border-radius: 12px;
-}
-
-.summary-actions {
-  display: flex; gap: 10px; padding: 16px 20px;
-}
-
-.btn-share, .btn-again {
-  flex: 1; padding: 14px; border: none; border-radius: 12px;
-  font-family: 'Nunito', sans-serif; font-size: 14px;
-  font-weight: 800; cursor: pointer;
-}
-
-.btn-share {
-  background: var(--card2); color: var(--text);
-}
-
-.btn-again {
-  background: linear-gradient(135deg, var(--accent), #0097a7);
-  color: var(--white);
-}
-
-/* ===== PROMOTION MODAL ===== */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.8); z-index: 200;
-  align-items: center; justify-content: center;
-  padding: 20px;
-}
-
-.modal-overlay.active { display: flex; }
-
-.promo-card {
-  width: 100%; max-width: 340px;
-  background: linear-gradient(135deg, #1a2a3a, #243447);
-  border-radius: 20px; overflow: hidden;
-  animation: modalPop 0.4s ease;
-  text-align: center;
-}
-
-@keyframes modalPop {
-  0% { transform: scale(0.7); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.promo-header {
-  padding: 24px 20px;
-  background: linear-gradient(135deg, var(--gold), #ff9800);
-}
-
-.promo-icon { font-size: 48px; margin-bottom: 8px; }
-
-.promo-title {
-  font-size: 12px; font-weight: 800;
-  color: rgba(0,0,0,0.6); text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.promo-rank {
-  font-size: 22px; font-weight: 900; color: var(--bg);
-  margin-top: 4px;
-}
-
-.promo-body { padding: 20px; text-align: left; }
-
-.promo-body p {
-  font-size: 13px; color: var(--text2);
-  margin-bottom: 12px; text-align: center;
-}
-
-.promo-body p strong { color: var(--text); }
-
-.promo-perks { list-style: none; padding: 0; }
-
-.promo-perks li {
-  font-size: 13px; padding: 6px 0;
-  color: var(--text);
-}
-
-.promo-footer {
-  display: flex; gap: 10px; padding: 16px 20px;
-}
-
-.promo-footer button {
-  flex: 1; padding: 12px; border: none; border-radius: 12px;
-  font-family: 'Nunito', sans-serif; font-size: 14px;
-  font-weight: 800; cursor: pointer;
-}
-
-.btn-promo-share { background: var(--card2); color: var(--text); }
-.btn-promo-ok {
-  background: linear-gradient(135deg, var(--gold), var(--accent2));
-  color: var(--bg);
-}
-
-/* ===== INSTRUCTIONS OVERLAY ===== */
-.instructions-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.85); z-index: 200;
-  align-items: center; justify-content: center;
-  padding: 20px;
-}
-
-.instructions-overlay.active { display: flex; }
-
-.instructions-card {
-  width: 100%; max-width: 360px;
-  background: var(--card); border-radius: 20px;
-  padding: 24px; max-height: 80vh; overflow-y: auto;
-}
-
-.instructions-card h2 {
-  font-size: 20px; margin-bottom: 16px;
-  text-align: center;
-}
-
-.instruction-item {
-  display: flex; gap: 12px; align-items: flex-start;
-  padding: 10px 0;
-}
-
-.instruction-item .step-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: var(--accent); color: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 800; flex-shrink: 0;
-}
-
-.instruction-item p { font-size: 13px; color: var(--text2); line-height: 1.5; }
-.instruction-item p strong { color: var(--text); }
-
-.btn-understand {
-  width: 100%; padding: 14px; border: none; border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent), #0097a7);
-  color: var(--white); font-family: 'Nunito', sans-serif;
-  font-size: 16px; font-weight: 800; cursor: pointer;
-  margin-top: 16px;
-}
-
-/* Waiting indicator */
-.waiting-area {
-  text-align: center; padding: 30px;
-  color: var(--text2); font-size: 14px;
-}
-
-.waiting-area .waiting-icon {
-  font-size: 48px; margin-bottom: 12px;
-  animation: float 2s ease infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
+/* ===== INSTRUCTIONS ===== */
+.instr-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.instr-overlay.on { display: flex; }
+.instr-card { width: 100%; max-width: 340px; background: var(--card); border-radius: 18px; padding: 20px; max-height: 80vh; overflow-y: auto; }
+.instr-card h2 { font-size: 18px; margin-bottom: 14px; text-align: center; }
+.instr-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; }
+.instr-num { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; }
+.instr-item p { font-size: 12px; color: var(--text2); line-height: 1.45; }
+.instr-item p b { color: var(--text); }
 </style>
-</head>
-<body>
 
-<!-- START SCREEN -->
+<!-- ===== START ===== -->
 <div id="startScreen" class="screen active">
-  <div class="logo-area">
-    <div class="logo-icon">🦷</div>
-    <div class="logo-title">Dental Nurse Hero</div>
-    <div class="logo-sub">Wira Jururawat Pergigian</div>
+  <div class="logo-icon">
+    <svg viewBox="0 0 64 64" fill="none"><path d="M32 8c-8 0-14 6-14 14 0 5 2 9 6 12l-2 22h20l-2-22c4-3 6-7 6-12 0-8-6-14-14-14z" fill="#fff" opacity=".9"/><path d="M26 36l2 16h8l2-16" stroke="#00bcd4" stroke-width="2" fill="none"/><circle cx="28" cy="20" r="2" fill="#e0e0e0"/><circle cx="36" cy="20" r="2" fill="#e0e0e0"/></svg>
   </div>
-
-  <div class="name-input-area">
+  <div class="logo-title">Dental Nurse Hero</div>
+  <div class="logo-sub">Wira Jururawat Pergigian</div>
+  <div class="name-area">
     <label>Nama Anda / Your Name</label>
     <input type="text" class="name-input" id="playerName" placeholder="Nurse Aini" maxlength="20">
   </div>
-
-  <button class="btn-start" onclick="startGame()">Mula Shift! 🏥</button>
+  <button class="btn-primary" id="btnStart">Mula Shift!</button>
 </div>
 
-<!-- GAME SCREEN -->
+<!-- ===== GAME ===== -->
 <div id="gameScreen" class="screen">
   <div class="top-bar">
-    <div class="top-bar-left">
-      <div class="nurse-avatar">👩‍⚕️</div>
-      <div class="nurse-info">
-        <div class="nurse-name" id="displayName">Nurse Aini</div>
-        <div class="nurse-rank" id="displayRank">Jururawat Pergigian</div>
-      </div>
+    <div class="top-left">
+      <div class="avatar">👩‍⚕️</div>
+      <div class="info"><div class="name" id="dName">Nurse Aini</div><div class="rank" id="dRank">Jururawat Pergigian</div></div>
     </div>
-    <div class="top-bar-right">
-      <div class="score-badge">⭐ <span id="displayScore">0</span></div>
-      <div class="patient-counter" id="patientCounter">0/8</div>
+    <div class="top-right">
+      <div class="score-pill">⭐ <span id="dScore">0</span></div>
+      <div class="pat-count" id="dCount">0/8</div>
     </div>
   </div>
 
-  <div id="patientBar" class="patient-bar" style="display:none;">
-    <div class="patient-header">
-      <div class="patient-id" id="patientId">Pesakit #2001</div>
-      <div class="problems-count" id="problemsCount">0/2 selesai</div>
+  <div id="patBar" class="pat-bar" hidden>
+    <div class="pat-header">
+      <div class="pat-id" id="patId">Pesakit #2001</div>
+      <div class="pat-prog" id="patProg">0/2</div>
     </div>
-    <div class="patient-complaint" id="patientComplaint">
-      <strong>Aduan:</strong> Sakit gigi belakang
-    </div>
+    <div class="pat-complaint" id="patComplaint"><b>Aduan:</b> —</div>
   </div>
 
-  <div id="moodArea" class="mood-bar-container" style="display:none;">
-    <span class="mood-label">Mood Pesakit</span>
-    <div class="mood-bar-track">
-      <div class="mood-bar-fill" id="moodFill" style="width: 100%"></div>
-    </div>
-    <span class="mood-emoji" id="moodEmoji">😊</span>
+  <div id="moodRow" class="mood-row" hidden>
+    <span class="mood-label">Mood</span>
+    <div class="mood-track"><div class="mood-fill" id="moodFill" style="width:100%"></div></div>
+    <span id="moodE">😊</span>
   </div>
 
-  <div id="dentistArea" class="dentist-area" style="display:none;">
-    <div class="dentist-avatar">🧑‍⚕️</div>
-    <div class="dentist-bubble">
-      <div class="dentist-name">Dr. Halim</div>
-      <div id="dentistSpeech">Sedia kan cermin mulut.</div>
-    </div>
+  <div id="drArea" class="dr-area" hidden>
+    <div class="dr-avatar">🧑‍⚕️</div>
+    <div class="dr-bubble"><div class="dr-label">Dr.AE</div><div id="drSpeech">—</div></div>
   </div>
 
-  <div id="timerArea" class="timer-bar" style="display:none;">
-    <div class="timer-fill" id="timerFill" style="width: 100%"></div>
+  <div id="timerArea" class="timer-bar" hidden><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+
+  <!-- POV View -->
+  <div id="povArea" class="pov-area" hidden>
+    <div class="pov-scene" id="povScene"></div>
   </div>
 
-  <div id="dentalView" class="dental-view" style="display:none;">
-    <div class="mouth-container" id="mouthContainer"></div>
+  <!-- Infection Control Phase -->
+  <div id="icPhase" class="ic-phase" hidden>
+    <div class="ic-title">🧤 Infection Control</div>
+    <div class="ic-sub">Ikut langkah dengan betul sebelum pesakit seterusnya</div>
+    <div class="ic-grid" id="icGrid"></div>
+    <div class="ic-step-counter" id="icCounter">Langkah 1/6</div>
   </div>
 
-  <div id="callArea" class="call-patient-area">
+  <!-- Call area -->
+  <div id="callArea" class="call-area">
     <div style="text-align:center;">
-      <div class="waiting-area">
-        <div class="waiting-icon">🪑</div>
-        <div>Ruang menunggu penuh!</div>
-        <div style="font-size:12px; margin-top:4px;">Tekan butang untuk panggil pesakit</div>
-      </div>
-      <button class="btn-call" onclick="callNextPatient()">📢 Panggil Pesakit</button>
+      <div class="wait-icon">🪑</div>
+      <div style="font-size:13px; color:var(--text2);">Ruang menunggu penuh!</div>
+      <button class="btn-call" id="btnCall">📢 Panggil Pesakit</button>
     </div>
   </div>
 
-  <button class="btn-complete" id="btnComplete" onclick="completePatient()">
-    ✅ Siap Rawatan
-  </button>
+  <button class="btn-complete" id="btnDone" hidden>✅ Siap Rawatan</button>
 
-  <div id="toolTray" class="tool-tray" style="display:none;">
+  <div id="toolTray" class="tray" hidden>
     <div class="tray-label">🧰 Tray Alatan</div>
-    <div class="tools-grid" id="toolsGrid"></div>
+    <div class="tray-grid" id="toolsGrid"></div>
   </div>
 </div>
 
-<!-- SUMMARY SCREEN -->
+<!-- ===== SUMMARY ===== -->
 <div id="summaryScreen" class="screen">
-  <div class="summary-card">
-    <div class="summary-header">
-      <div class="summary-stars" id="summaryStars">⭐⭐⭐</div>
-      <div class="summary-score" id="summaryScore">0</div>
-      <div class="summary-score-label">MATA</div>
+  <div class="sum-card">
+    <div class="sum-head">
+      <div class="sum-stars" id="sStars">⭐⭐⭐</div>
+      <div class="sum-score" id="sScore">0</div>
+      <div class="sum-mata">MATA</div>
     </div>
-    <div class="summary-body">
-      <div class="summary-mood" id="summaryMood">
-        <span>Mood akhir:</span>
-        <span id="summaryMoodEmoji">😊</span>
-        <span id="summaryMoodText">Baik - 80%</span>
-      </div>
-      <div class="summary-row">
-        <span class="label">💰 Gaji hari ini</span>
-        <span class="value salary" id="summarySalary">+RM0</span>
-      </div>
-      <div class="summary-row">
-        <span class="label">👥 Pesakit dirawat</span>
-        <span class="value" id="summaryPatients">0</span>
-      </div>
-      <div class="summary-row">
-        <span class="label">✅ Ketepatan</span>
-        <span class="value" id="summaryAccuracy">0%</span>
-      </div>
-      <div class="summary-row">
-        <span class="label">⚡ Terpantas</span>
-        <span class="value" id="summaryFastest">-</span>
-      </div>
+    <div class="sum-body">
+      <div class="sum-mood"><span>Mood akhir:</span><span id="sMoodE">😊</span><span id="sMoodT">Baik - 80%</span></div>
+      <div class="sum-row"><span class="l">💰 Gaji hari ini</span><span class="v sal" id="sSalary">+RM0</span></div>
+      <div class="sum-row"><span class="l">👥 Pesakit dirawat</span><span class="v" id="sPats">0</span></div>
+      <div class="sum-row"><span class="l">✅ Ketepatan</span><span class="v" id="sAcc">0%</span></div>
+      <div class="sum-row"><span class="l">🧤 Infection Control</span><span class="v" id="sIC">0%</span></div>
     </div>
-    <div class="summary-actions">
-      <button class="btn-share" onclick="shareResult()">📤 Kongsi</button>
-      <button class="btn-again" onclick="playAgain()">🔄 Main Lagi</button>
+    <div class="sum-actions">
+      <button class="btn-share" id="btnShare">📤 Kongsi</button>
+      <button class="btn-again" id="btnAgain">🔄 Main Lagi</button>
     </div>
   </div>
 </div>
 
-<!-- PROMOTION MODAL -->
-<div class="modal-overlay" id="promoModal">
-  <div class="promo-card">
-    <div class="promo-header">
-      <div class="promo-icon">🏅</div>
-      <div class="promo-title">SURAT KENAIKAN PANGKAT</div>
-      <div class="promo-rank" id="promoRank">Jururawat Pergigian Kanan</div>
-    </div>
-    <div class="promo-body">
-      <p>Dengan ini <strong id="promoName">Nurse Aini</strong> dinaikkan pangkat atas prestasi cemerlang! 🎉</p>
-      <ul class="promo-perks" id="promoPerks"></ul>
-    </div>
-    <div class="promo-footer">
-      <button class="btn-promo-share" onclick="sharePromo()">📤 Kongsi</button>
-      <button class="btn-promo-ok" onclick="closePromo()">Terima kasih! 🎉</button>
+<!-- ===== PROMOTION MODAL ===== -->
+<div class="modal" id="promoModal">
+  <div class="promo">
+    <div class="promo-head"><div class="icon">🏅</div><div class="tag">SURAT KENAIKAN PANGKAT</div><div class="rank" id="pRank">—</div></div>
+    <div class="promo-body"><p>Dengan ini <b id="pName">—</b> dinaikkan pangkat atas prestasi cemerlang!</p><ul class="promo-perks" id="pPerks"></ul></div>
+    <div class="promo-foot">
+      <button class="btn-share" id="btnPromoShare">📤 Kongsi</button>
+      <button style="background:linear-gradient(135deg,var(--gold),var(--accent2));color:var(--bg);" id="btnPromoOk">Terima kasih!</button>
     </div>
   </div>
 </div>
 
-<!-- INSTRUCTIONS OVERLAY -->
-<div class="instructions-overlay" id="instructionsOverlay">
-  <div class="instructions-card">
+<!-- ===== INSTRUCTIONS ===== -->
+<div class="instr-overlay" id="instrOverlay">
+  <div class="instr-card">
     <h2>📋 Cara Bermain</h2>
-    <div class="instruction-item">
-      <div class="step-num">1</div>
-      <p><strong>Panggil pesakit</strong> dari ruang menunggu untuk mulakan rawatan.</p>
-    </div>
-    <div class="instruction-item">
-      <div class="step-num">2</div>
-      <p><strong>Dr. Halim akan arahkan</strong> alat yang diperlukan. Dengar arahan beliau!</p>
-    </div>
-    <div class="instruction-item">
-      <div class="step-num">3</div>
-      <p><strong>Pilih alat yang betul</strong> dari tray alatan di bawah. Cepat dan tepat!</p>
-    </div>
-    <div class="instruction-item">
-      <div class="step-num">4</div>
-      <p><strong>Mood pesakit</strong> akan turun jika lambat atau silap. Jaga mood mereka!</p>
-    </div>
-    <div class="instruction-item">
-      <div class="step-num">5</div>
-      <p><strong>Kumpul mata</strong> untuk naik pangkat dan buka kes baru!</p>
-    </div>
-    <button class="btn-understand" onclick="closeInstructions()">Faham! Jom mula! 💪</button>
+    <div class="instr-item"><div class="instr-num">1</div><p><b>Panggil pesakit</b> dari ruang menunggu.</p></div>
+    <div class="instr-item"><div class="instr-num">2</div><p><b>Dr.AE akan arahkan</b> alat yang diperlukan. Dengar arahan!</p></div>
+    <div class="instr-item"><div class="instr-num">3</div><p><b>Pilih alat yang betul</b> dari tray — anda akan nampak tangan anda hulurkan alat kepada doktor.</p></div>
+    <div class="instr-item"><div class="instr-num">4</div><p><b>Selepas rawatan</b>, bersihkan kerusi dental dengan langkah infection control yang betul.</p></div>
+    <div class="instr-item"><div class="instr-num">5</div><p><b>Mood pesakit</b> turun jika lambat atau silap. Kumpul mata untuk naik pangkat!</p></div>
+    <button class="btn-primary" id="btnInstr" style="margin-top:14px;">Faham! Jom mula! 💪</button>
   </div>
 </div>
 
 <script>
+/* ===== SVG TOOL ICONS ===== */
+const SVG = {
+  mirror: `<svg viewBox="0 0 36 36"><circle cx="18" cy="12" r="7" fill="none" stroke="#b0bec5" stroke-width="2"/><circle cx="18" cy="12" r="5" fill="#e3f2fd"/><line x1="18" y1="19" x2="18" y2="34" stroke="#90a4ae" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  probe: `<svg viewBox="0 0 36 36"><line x1="18" y1="34" x2="18" y2="10" stroke="#90a4ae" stroke-width="2" stroke-linecap="round"/><path d="M18 10 Q22 6 20 2" stroke="#607d8b" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="18" cy="20" r="2.5" fill="#78909c"/></svg>`,
+  scaler: `<svg viewBox="0 0 36 36"><line x1="18" y1="34" x2="18" y2="12" stroke="#90a4ae" stroke-width="2.2" stroke-linecap="round"/><path d="M18 12 Q14 6 16 2" stroke="#546e7a" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="15" y="18" width="6" height="4" rx="1" fill="#78909c"/></svg>`,
+  suction: `<svg viewBox="0 0 36 36"><path d="M14 34 L14 16 Q14 10 18 8 L22 6" stroke="#42a5f5" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="22" cy="6" r="2" fill="#64b5f6"/><rect x="12" y="28" width="4" height="6" rx="1" fill="#90caf9" opacity=".5"/></svg>`,
+  drill: `<svg viewBox="0 0 36 36"><rect x="8" y="14" width="20" height="8" rx="4" fill="#78909c"/><rect x="4" y="16" width="8" height="4" rx="2" fill="#546e7a"/><path d="M28 18 L34 16 L34 20 Z" fill="#455a64"/><circle cx="20" cy="18" r="1.5" fill="#b0bec5"/></svg>`,
+  composite: `<svg viewBox="0 0 36 36"><rect x="14" y="4" width="8" height="24" rx="3" fill="#a1887f"/><rect x="15" y="6" width="6" height="8" rx="2" fill="#d7ccc8"/><path d="M16 28 L20 28 L18 34 Z" fill="#8d6e63"/><rect x="13" y="14" width="10" height="3" rx="1" fill="#795548"/></svg>`,
+  curinglight: `<svg viewBox="0 0 36 36"><rect x="10" y="12" width="16" height="10" rx="3" fill="#5c6bc0"/><rect x="6" y="14" width="6" height="6" rx="2" fill="#3f51b5"/><rect x="26" y="15" width="6" height="4" rx="1" fill="#7986cb"/><circle cx="32" cy="17" r="2" fill="#ffeb3b" opacity=".8"/><rect x="16" y="22" width="4" height="10" rx="1.5" fill="#7986cb"/></svg>`,
+  cotton: `<svg viewBox="0 0 36 36"><ellipse cx="18" cy="18" rx="10" ry="7" fill="#f5f5f5"/><ellipse cx="18" cy="18" rx="10" ry="7" fill="none" stroke="#e0e0e0" stroke-width="1"/><path d="M10 16 Q14 12 18 14 Q22 12 26 16" stroke="#eeeeee" stroke-width=".8" fill="none"/><path d="M10 20 Q14 22 18 20 Q22 22 26 20" stroke="#eeeeee" stroke-width=".8" fill="none"/></svg>`,
+  forceps: `<svg viewBox="0 0 36 36"><path d="M14 34 L16 18 Q12 10 10 4" stroke="#78909c" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M22 34 L20 18 Q24 10 26 4" stroke="#78909c" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M10 4 Q14 8 18 6 Q22 8 26 4" stroke="#546e7a" stroke-width="2" fill="none"/><circle cx="18" cy="18" r="2" fill="#607d8b"/></svg>`,
+  elevator: `<svg viewBox="0 0 36 36"><rect x="15" y="16" width="6" height="18" rx="2" fill="#90a4ae"/><rect x="13" y="4" width="10" height="14" rx="2" fill="#607d8b"/><line x1="18" y1="6" x2="18" y2="16" stroke="#78909c" stroke-width="1.5"/></svg>`,
+  impression: `<svg viewBox="0 0 36 36"><path d="M6 14 Q6 26 18 28 Q30 26 30 14" fill="none" stroke="#e91e63" stroke-width="2.5" stroke-linecap="round"/><path d="M8 14 L8 10 M12 14 L12 8 M16 14 L16 7 M20 14 L20 7 M24 14 L24 8 M28 14 L28 10" stroke="#f48fb1" stroke-width="1.5" stroke-linecap="round"/><rect x="4" y="12" width="28" height="4" rx="2" fill="#ec407a" opacity=".3"/></svg>`,
+  fluoride: `<svg viewBox="0 0 36 36"><rect x="12" y="10" width="12" height="20" rx="3" fill="#26a69a"/><rect x="14" y="4" width="8" height="8" rx="2" fill="#4db6ac"/><rect x="14" y="14" width="8" height="6" rx="1" fill="#e0f2f1" opacity=".5"/><text x="18" y="19" text-anchor="middle" font-size="5" font-weight="bold" fill="#fff">F</text></svg>`,
+};
+
 const TOOLS = [
-  { id: 'mirror', name: 'Cermin\nMulut', icon: '🔍', desc: 'Mouth mirror' },
-  { id: 'probe', name: 'Probe', icon: '🪝', desc: 'Explorer probe' },
-  { id: 'scaler', name: 'Skaler', icon: '⚒️', desc: 'Scaler' },
-  { id: 'suction', name: 'Penyedut', icon: '💨', desc: 'Suction' },
-  { id: 'drill', name: 'Gerudi', icon: '🔧', desc: 'Handpiece/Drill' },
-  { id: 'composite', name: 'Komposit', icon: '🧴', desc: 'Composite' },
-  { id: 'curinglight', name: 'Lampu\nCuring', icon: '🔦', desc: 'Curing light' },
-  { id: 'cotton', name: 'Kapas', icon: '☁️', desc: 'Cotton roll' },
-  { id: 'forceps', name: 'Forsep', icon: '🦾', desc: 'Extraction forceps' },
-  { id: 'elevator', name: 'Elevator', icon: '🗡️', desc: 'Elevator' },
-  { id: 'impression', name: 'Acuan', icon: '🫧', desc: 'Impression tray' },
-  { id: 'fluoride', name: 'Fluorida', icon: '💧', desc: 'Fluoride' },
+  { id:'mirror', name:'Cermin\nMulut' }, { id:'probe', name:'Probe' },
+  { id:'scaler', name:'Skaler' }, { id:'suction', name:'Penyedut' },
+  { id:'drill', name:'Handpiece' }, { id:'composite', name:'Komposit' },
+  { id:'curinglight', name:'Lampu\nCuring' }, { id:'cotton', name:'Kapas' },
+  { id:'forceps', name:'Forsep' }, { id:'elevator', name:'Elevator' },
+  { id:'impression', name:'Acuan' }, { id:'fluoride', name:'Fluorida' },
+];
+
+const IC_STEPS = [
+  { id:'gloves-off', icon:'🧤', label:'Buang sarung tangan lama' },
+  { id:'sharps', icon:'⚠️', label:'Buang bahan tajam ke sharps bin' },
+  { id:'wipe', icon:'🧹', label:'Lap & disinfect permukaan' },
+  { id:'barrier', icon:'🛡️', label:'Tukar barrier baru' },
+  { id:'gloves-on', icon:'🧤', label:'Pakai sarung tangan baru' },
+  { id:'tray', icon:'🧰', label:'Sedia tray alatan baru' },
 ];
 
 const PROCEDURES = [
-  {
-    type: 'Pemeriksaan',
-    complaint: 'Sakit gigi bila makan manis',
-    toothNum: 36,
-    steps: [
-      { tool: 'mirror', speech: 'Sediakan cermin mulut untuk pemeriksaan.' },
-      { tool: 'probe', speech: 'Probe, saya nak periksa kaviti.' },
-      { tool: 'cotton', speech: 'Kapas untuk keringkan kawasan.' },
-    ],
-    problems: 1,
-  },
-  {
-    type: 'Scaling',
-    complaint: 'Gusi berdarah dan ada karang gigi',
-    toothNum: 31,
-    steps: [
-      { tool: 'mirror', speech: 'Cermin mulut dulu, nak tengok karang.' },
-      { tool: 'scaler', speech: 'Skaler, banyak karang ni.' },
-      { tool: 'suction', speech: 'Sedut air tu, jangan bagi lemas pesakit.' },
-      { tool: 'scaler', speech: 'Skaler lagi, bahagian bawah belum bersih.' },
-      { tool: 'suction', speech: 'Sedut lagi sekali.' },
-    ],
-    problems: 2,
-  },
-  {
-    type: 'Tampalan',
-    complaint: 'Lubang besar kat gigi depan, malu nak senyum',
-    toothNum: 11,
-    steps: [
-      { tool: 'mirror', speech: 'Cermin mulut, nak tengok kerosakan.' },
-      { tool: 'probe', speech: 'Probe untuk ukur kedalaman kaviti.' },
-      { tool: 'drill', speech: 'Gerudi, kena buang bahagian rosak.' },
-      { tool: 'suction', speech: 'Penyedut! Banyak air ni.' },
-      { tool: 'cotton', speech: 'Kapas, nak keringkan kawasan.' },
-      { tool: 'composite', speech: 'Komposit warna A2, sedia kan.' },
-      { tool: 'curinglight', speech: 'Lampu curing, 20 saat.' },
-    ],
-    problems: 2,
-  },
-  {
-    type: 'Cabutan',
-    complaint: 'Gigi goyang teruk, nak cabut je',
-    toothNum: 46,
-    steps: [
-      { tool: 'mirror', speech: 'Cermin mulut, nak periksa mobility.' },
-      { tool: 'probe', speech: 'Probe, nak check periodontal pocket.' },
-      { tool: 'elevator', speech: 'Elevator, nak longgarkan gigi dulu.' },
-      { tool: 'forceps', speech: 'Forsep sekarang. Pegang kuat.' },
-      { tool: 'cotton', speech: 'Kapas gauze, tekan kat soket tu.' },
-    ],
-    problems: 2,
-  },
-  {
-    type: 'Pemeriksaan',
-    complaint: 'Ngilu bila minum air sejuk',
-    toothNum: 24,
-    steps: [
-      { tool: 'mirror', speech: 'Cermin mulut untuk start.' },
-      { tool: 'probe', speech: 'Probe, saya nak periksa.' },
-      { tool: 'cotton', speech: 'Kapas, keringkan situ.' },
-      { tool: 'fluoride', speech: 'Sapu fluoride kat kawasan sensitif.' },
-    ],
-    problems: 1,
-  },
-  {
-    type: 'Tampalan',
-    complaint: 'Gigi pecah masa makan keropok',
-    toothNum: 15,
-    steps: [
-      { tool: 'mirror', speech: 'Cermin mulut.' },
-      { tool: 'drill', speech: 'Gerudi, buang bahagian tajam.' },
-      { tool: 'suction', speech: 'Penyedut cepat!' },
-      { tool: 'cotton', speech: 'Kapas.' },
-      { tool: 'composite', speech: 'Komposit, nak rebuild shape.' },
-      { tool: 'curinglight', speech: 'Lampu curing. Tahan steady.' },
-    ],
-    problems: 2,
-  },
-  {
-    type: 'Scaling',
-    complaint: 'Dah 2 tahun tak cuci gigi, banyak karang',
-    toothNum: 41,
-    steps: [
-      { tool: 'mirror', speech: 'Cermin mulut. Ya ampun banyaknya karang!' },
-      { tool: 'scaler', speech: 'Skaler dulu bahagian depan.' },
-      { tool: 'suction', speech: 'Sedut!' },
-      { tool: 'scaler', speech: 'Skaler lagi, bahagian belakang pulak.' },
-      { tool: 'suction', speech: 'Penyedut lagi.' },
-      { tool: 'fluoride', speech: 'Fluoride untuk polish.' },
-    ],
-    problems: 3,
-  },
-  {
-    type: 'Cabutan',
-    complaint: 'Wisdom tooth sakit sangat, tak boleh buka mulut',
-    toothNum: 48,
-    steps: [
-      { tool: 'mirror', speech: 'Cermin mulut, nak assess.' },
-      { tool: 'probe', speech: 'Probe, check ada infection tak.' },
-      { tool: 'elevator', speech: 'Elevator. Ni kes susah sikit.' },
-      { tool: 'suction', speech: 'Penyedut, banyak darah.' },
-      { tool: 'forceps', speech: 'Forsep, tarik perlahan.' },
-      { tool: 'cotton', speech: 'Gauze tekan kuat kat soket.' },
-    ],
-    problems: 2,
-  },
+  { type:'Pemeriksaan', complaint:'Sakit gigi bila makan manis', tooth:36, problems:1,
+    steps:[{t:'mirror',s:'Cermin mulut untuk pemeriksaan.'},{t:'probe',s:'Probe, nak periksa kaviti.'},{t:'cotton',s:'Kapas untuk keringkan.'}] },
+  { type:'Scaling', complaint:'Gusi berdarah dan ada karang gigi', tooth:31, problems:2,
+    steps:[{t:'mirror',s:'Cermin mulut, nak tengok karang.'},{t:'scaler',s:'Skaler, banyak karang ni.'},{t:'suction',s:'Sedut air tu!'},{t:'scaler',s:'Skaler lagi, bawah belum bersih.'},{t:'suction',s:'Sedut sekali lagi.'}] },
+  { type:'Tampalan', complaint:'Lubang besar kat gigi depan', tooth:11, problems:2,
+    steps:[{t:'mirror',s:'Cermin mulut, tengok kerosakan.'},{t:'probe',s:'Probe untuk ukur kedalaman.'},{t:'drill',s:'Handpiece, buang bahagian rosak.'},{t:'suction',s:'Penyedut! Banyak air.'},{t:'cotton',s:'Kapas, keringkan.'},{t:'composite',s:'Komposit warna A2.'},{t:'curinglight',s:'Lampu curing, 20 saat.'}] },
+  { type:'Cabutan', complaint:'Gigi goyang teruk, nak cabut', tooth:46, problems:2,
+    steps:[{t:'mirror',s:'Cermin mulut, periksa mobility.'},{t:'probe',s:'Probe, check pocket.'},{t:'elevator',s:'Elevator, longgarkan dulu.'},{t:'forceps',s:'Forsep sekarang.'},{t:'cotton',s:'Gauze, tekan kat soket.'}] },
+  { type:'Pemeriksaan', complaint:'Ngilu bila minum air sejuk', tooth:24, problems:1,
+    steps:[{t:'mirror',s:'Cermin mulut.'},{t:'probe',s:'Probe, nak periksa.'},{t:'cotton',s:'Kapas, keringkan.'},{t:'fluoride',s:'Sapu fluoride kat kawasan sensitif.'}] },
+  { type:'Tampalan', complaint:'Gigi pecah masa makan keropok', tooth:15, problems:2,
+    steps:[{t:'mirror',s:'Cermin mulut.'},{t:'drill',s:'Handpiece, buang bahagian tajam.'},{t:'suction',s:'Penyedut cepat!'},{t:'cotton',s:'Kapas.'},{t:'composite',s:'Komposit, rebuild shape.'},{t:'curinglight',s:'Lampu curing. Tahan steady.'}] },
+  { type:'Scaling', complaint:'Dah 2 tahun tak cuci gigi', tooth:41, problems:3,
+    steps:[{t:'mirror',s:'Cermin mulut. Banyaknya karang!'},{t:'scaler',s:'Skaler, bahagian depan.'},{t:'suction',s:'Sedut!'},{t:'scaler',s:'Skaler, bahagian belakang.'},{t:'suction',s:'Penyedut lagi.'},{t:'fluoride',s:'Fluoride untuk polish.'}] },
+  { type:'Cabutan', complaint:'Wisdom tooth sakit sangat', tooth:48, problems:2,
+    steps:[{t:'mirror',s:'Cermin mulut, nak assess.'},{t:'probe',s:'Probe, check infection.'},{t:'elevator',s:'Elevator. Kes susah ni.'},{t:'suction',s:'Penyedut, banyak darah.'},{t:'forceps',s:'Forsep, tarik perlahan.'},{t:'cotton',s:'Gauze tekan kuat.'}] },
 ];
 
 const RANKS = [
-  { title: 'Jururawat Pergigian', minScore: 0, salary: 80, perks: [] },
-  { title: 'Jururawat Pergigian Kanan', minScore: 200, salary: 120,
-    perks: ['💰 Gaji naik 50% + hadiah RM300', '🩺 Kes scaling dibuka', '👕 Baju biru gelap Jururawat Kanan'] },
-  { title: 'Penyelia Jururawat Pergigian', minScore: 500, salary: 180,
-    perks: ['💰 Gaji naik 50% + hadiah RM800', '🔧 Kes cabutan dibuka', '👥 Junior nurse bantu anda', '👕 Baju hijau Penyelia'] },
-  { title: 'Ketua Jururawat Pergigian', minScore: 1000, salary: 250,
-    perks: ['💰 Gaji naik 40% + hadiah RM1,500', '🦷 Semua kes dibuka', '⭐ Gelaran "Tangan Emas"', '👕 Baju emas Ketua Jururawat'] },
+  { title:'Jururawat Pergigian', min:0, sal:80, perks:[] },
+  { title:'Jururawat Pergigian Kanan', min:200, sal:120,
+    perks:['💰 Gaji naik 50% + hadiah RM300','🩺 Kes scaling dibuka','👕 Baju biru gelap'] },
+  { title:'Penyelia Jururawat Pergigian', min:500, sal:180,
+    perks:['💰 Gaji naik 50% + hadiah RM800','🔧 Kes cabutan dibuka','👥 Junior nurse bantu anda'] },
+  { title:'Ketua Jururawat Pergigian', min:1000, sal:250,
+    perks:['💰 Gaji naik 40% + hadiah RM1,500','🦷 Semua kes dibuka','⭐ Gelaran "Tangan Emas"'] },
 ];
 
-const TEETH_UPPER = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
-const TEETH_LOWER = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+const $ = id => document.getElementById(id);
+let S = {};
 
-let state = {
-  playerName: 'Nurse Aini',
-  score: 0,
-  totalScore: 0,
-  currentRank: 0,
-  patientIndex: 0,
-  maxPatients: 8,
-  currentProcedure: null,
-  currentStep: 0,
-  mood: 100,
-  correctCount: 0,
-  wrongCount: 0,
-  patientsCompleted: 0,
-  timerInterval: null,
-  timerValue: 100,
-  fastestTime: Infinity,
-  patientStartTime: 0,
-  stepStartTime: 0,
-  isFirstGame: true,
-  salaryEarned: 0,
-  avgMood: 0,
-  moodSum: 0,
-  procedures: [],
-};
+function resetState() {
+  S = {
+    name:'Nurse Aini', score:0, totalScore:0, rank:0,
+    pi:0, maxP:8, proc:null, step:0, mood:100,
+    ok:0, bad:0, done:0, timer:null, tv:100,
+    fastest:Infinity, t0:0, ts:0, first:true,
+    salary:0, moodSum:0, procs:[],
+    icOk:0, icBad:0, icStep:0, phase:'call',
+  };
+}
+resetState();
 
-function initTeeth() {
-  const container = document.getElementById('mouthContainer');
-  container.innerHTML = '';
+function renderPOV(toolId, status) {
+  const sc = $('povScene');
+  const toolSvg = toolId ? SVG[toolId] : '';
+  const passingClass = status === 'passing' ? 'pov-tool-passing' : '';
 
-  const archWidth = 280;
-  const cx = archWidth / 2;
+  sc.innerHTML = `
+    <svg viewBox="0 0 360 220" width="100%" height="100%" style="display:block;">
+      <!-- Patient mouth area at top -->
+      <ellipse cx="180" cy="40" rx="50" ry="28" fill="#e8b4b8" opacity=".7"/>
+      <ellipse cx="180" cy="40" rx="38" ry="18" fill="#c62828" opacity=".5"/>
+      <path d="M150 35 Q155 30 160 33 Q165 28 170 32 Q175 28 180 32 Q185 28 190 32 Q195 28 200 33 Q205 30 210 35" fill="#f5f5f5" opacity=".8"/>
+      <path d="M155 47 Q160 52 165 48 Q170 53 175 49 Q180 53 185 49 Q190 53 195 48 Q200 52 205 47" fill="#f5f5f5" opacity=".8"/>
 
-  TEETH_UPPER.forEach((num, i) => {
-    const tooth = document.createElement('div');
-    tooth.className = 'tooth';
-    tooth.id = `tooth-${num}`;
-    tooth.textContent = num;
-    const angle = Math.PI + (i / (TEETH_UPPER.length - 1)) * Math.PI;
-    const rx = 125, ry = 60;
-    const x = cx + rx * Math.cos(angle) - 14;
-    const y = 70 + ry * Math.sin(angle) - 14;
-    tooth.style.left = x + 'px';
-    tooth.style.top = y + 'px';
-    container.appendChild(tooth);
-  });
+      <!-- Dr.AE's hand reaching from upper-right -->
+      <g opacity=".85">
+        <path d="M310 20 Q280 50 260 80 Q250 95 255 100 Q260 105 270 95 Q280 80 300 55 L320 30 Z" fill="#d4a574"/>
+        <path d="M255 100 Q250 108 258 108 Q265 105 270 95" fill="#d4a574"/>
+        <text x="285" y="30" font-size="9" fill="#5c6bc0" font-weight="bold" text-anchor="middle">Dr.AE</text>
+      </g>
 
-  TEETH_LOWER.forEach((num, i) => {
-    const tooth = document.createElement('div');
-    tooth.className = 'tooth';
-    tooth.id = `tooth-${num}`;
-    tooth.textContent = num;
-    const angle = (i / (TEETH_LOWER.length - 1)) * Math.PI;
-    const rx = 125, ry = 55;
-    const x = cx + rx * Math.cos(angle) - 14;
-    const y = 110 + ry * Math.sin(angle) - 14;
-    tooth.style.left = x + 'px';
-    tooth.style.top = y + 'px';
-    container.appendChild(tooth);
-  });
+      ${status === 'waiting' ? `
+      <!-- Waiting indicator -->
+      <text x="180" y="130" text-anchor="middle" font-size="12" fill="#7a8fa3" font-weight="bold">Menunggu alat...</text>
+      ` : ''}
+
+      <!-- Your gloved hands at bottom -->
+      <g>
+        <!-- Left hand -->
+        <path d="M80 220 L75 180 Q70 160 85 155 Q95 152 100 160 L105 175 Q110 165 115 170 L110 190 L100 220 Z" fill="#a5d6a7"/>
+        <path d="M85 155 Q80 148 85 142 Q90 148 95 152" fill="#a5d6a7"/>
+        <path d="M95 152 Q92 144 97 138 Q102 144 100 152" fill="#a5d6a7"/>
+        <path d="M100 155 Q100 146 106 141 Q110 148 108 158" fill="#a5d6a7"/>
+        <!-- cuff -->
+        <rect x="70" y="210" width="40" height="14" rx="4" fill="#81c784"/>
+
+        <!-- Right hand -->
+        <path d="M280 220 L285 180 Q290 160 275 155 Q265 152 260 160 L255 175 Q250 165 245 170 L250 190 L260 220 Z" fill="#a5d6a7"/>
+        <path d="M275 155 Q280 148 275 142 Q270 148 265 152" fill="#a5d6a7"/>
+        <path d="M265 152 Q268 144 263 138 Q258 144 260 152" fill="#a5d6a7"/>
+        <path d="M260 155 Q260 146 254 141 Q250 148 252 158" fill="#a5d6a7"/>
+        <rect x="250" y="210" width="40" height="14" rx="4" fill="#81c784"/>
+      </g>
+
+      <!-- Tool in hand if holding -->
+      ${toolId && status === 'holding' ? `
+        <g transform="translate(155,140) scale(1.8)">
+          ${SVG[toolId].replace(/<svg[^>]*>/, '').replace('</svg>', '')}
+        </g>
+      ` : ''}
+    </svg>
+    ${toolId && status === 'passing' ? `<div class="${passingClass}" style="width:60px;height:60px;">${SVG[toolId]}</div>` : ''}
+  `;
 }
 
 function renderTools() {
-  const grid = document.getElementById('toolsGrid');
-  grid.innerHTML = '';
-  TOOLS.forEach(tool => {
-    const btn = document.createElement('div');
-    btn.className = 'tool-btn';
-    btn.id = `tool-${tool.id}`;
-    btn.innerHTML = `<span class="tool-icon">${tool.icon}</span><span class="tool-name">${tool.name}</span>`;
-    btn.addEventListener('click', () => handleToolClick(tool.id));
-    grid.appendChild(btn);
+  const g = $('toolsGrid');
+  g.innerHTML = '';
+  TOOLS.forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'tool-btn'; d.id = 'tool-' + t.id;
+    d.innerHTML = `${SVG[t.id]}<span class="t-name">${t.name}</span>`;
+    d.addEventListener('click', () => pickTool(t.id));
+    g.appendChild(d);
   });
 }
 
-function showScreen(id) {
+function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  $(id).classList.add('active');
 }
 
-function startGame() {
-  const nameInput = document.getElementById('playerName').value.trim();
-  state.playerName = nameInput || 'Nurse Aini';
-  state.score = 0;
-  state.patientIndex = 0;
-  state.patientsCompleted = 0;
-  state.correctCount = 0;
-  state.wrongCount = 0;
-  state.fastestTime = Infinity;
-  state.salaryEarned = 0;
-  state.moodSum = 0;
-  state.procedures = shuffle([...PROCEDURES]).slice(0, state.maxPatients);
+$('btnStart').addEventListener('click', () => {
+  const n = $('playerName').value.trim();
+  S.name = n || 'Nurse Aini';
+  S.score = 0; S.pi = 0; S.done = 0; S.ok = 0; S.bad = 0;
+  S.fastest = Infinity; S.salary = 0; S.moodSum = 0;
+  S.icOk = 0; S.icBad = 0;
+  S.procs = shuffle([...PROCEDURES]).slice(0, S.maxP);
 
-  document.getElementById('displayName').textContent = state.playerName;
-  document.getElementById('displayRank').textContent = RANKS[state.currentRank].title;
-  document.getElementById('displayScore').textContent = state.score;
-  document.getElementById('patientCounter').textContent = `0/${state.maxPatients}`;
+  $('dName').textContent = S.name;
+  $('dRank').textContent = RANKS[S.rank].title;
+  $('dScore').textContent = 0;
+  $('dCount').textContent = `0/${S.maxP}`;
 
-  showScreen('gameScreen');
+  show('gameScreen');
   renderTools();
-  initTeeth();
 
-  if (state.isFirstGame) {
-    document.getElementById('instructionsOverlay').classList.add('active');
-    state.isFirstGame = false;
-  }
-}
+  if (S.first) { $('instrOverlay').classList.add('on'); S.first = false; }
+});
 
-function closeInstructions() {
-  document.getElementById('instructionsOverlay').classList.remove('active');
-}
+$('btnInstr').addEventListener('click', () => $('instrOverlay').classList.remove('on'));
 
-function callNextPatient() {
-  if (state.patientIndex >= state.procedures.length) {
-    endDay();
-    return;
-  }
+$('btnCall').addEventListener('click', callPatient);
+$('btnDone').addEventListener('click', finishPatient);
+$('btnShare').addEventListener('click', shareResult);
+$('btnAgain').addEventListener('click', () => { S.score = 0; show('startScreen'); });
+$('btnPromoOk').addEventListener('click', () => $('promoModal').classList.remove('on'));
+$('btnPromoShare').addEventListener('click', sharePromo);
 
-  const proc = state.procedures[state.patientIndex];
-  state.currentProcedure = proc;
-  state.currentStep = 0;
-  state.mood = 100;
-  state.patientStartTime = Date.now();
+function callPatient() {
+  if (S.pi >= S.procs.length) { endDay(); return; }
+  const p = S.procs[S.pi];
+  S.proc = p; S.step = 0; S.mood = 100; S.t0 = Date.now();
 
-  const patientNum = 2001 + state.patientIndex;
-  document.getElementById('patientId').textContent = `Pesakit #${patientNum} — ${proc.type}`;
-  document.getElementById('problemsCount').textContent = `0/${proc.problems} selesai`;
-  document.getElementById('patientComplaint').innerHTML = `<strong>Aduan:</strong> ${proc.complaint}`;
+  $('patId').textContent = `Pesakit #${2001 + S.pi} — ${p.type}`;
+  $('patProg').textContent = `0/${p.problems}`;
+  $('patComplaint').innerHTML = `<b>Aduan:</b> ${p.complaint}`;
+  updateMood();
 
-  updateMoodDisplay();
+  $('callArea').hidden = true;
+  $('patBar').hidden = false;
+  $('moodRow').hidden = false;
+  $('drArea').hidden = false;
+  $('povArea').hidden = false;
+  $('toolTray').hidden = false;
+  $('timerArea').hidden = false;
 
-  document.getElementById('callArea').style.display = 'none';
-  document.getElementById('patientBar').style.display = 'block';
-  document.getElementById('moodArea').style.display = 'flex';
-  document.getElementById('dentistArea').style.display = 'flex';
-  document.getElementById('dentalView').style.display = 'flex';
-  document.getElementById('toolTray').style.display = 'block';
-  document.getElementById('timerArea').style.display = 'block';
-
-  document.querySelectorAll('.tooth').forEach(t => {
-    t.className = 'tooth';
-  });
-
-  const activeTooth = document.getElementById(`tooth-${proc.toothNum}`);
-  if (activeTooth) activeTooth.classList.add('active');
-
+  renderPOV(null, 'waiting');
   showStep();
   startTimer();
 }
 
 function showStep() {
-  const proc = state.currentProcedure;
-  if (state.currentStep >= proc.steps.length) {
-    treatmentDone();
-    return;
-  }
-
-  const step = proc.steps[state.currentStep];
-  document.getElementById('dentistSpeech').textContent = step.speech;
-  state.stepStartTime = Date.now();
-
-  document.querySelectorAll('.tool-btn').forEach(b => {
-    b.classList.remove('highlight', 'correct-flash', 'wrong-flash');
-  });
-
-  const solved = Math.min(state.currentStep, proc.problems);
-  document.getElementById('problemsCount').textContent = `${solved}/${proc.problems} selesai`;
+  const p = S.proc;
+  if (S.step >= p.steps.length) { treatmentDone(); return; }
+  const st = p.steps[S.step];
+  $('drSpeech').textContent = st.s;
+  S.ts = Date.now();
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('ok','bad'));
+  $('patProg').textContent = `${Math.min(S.step, p.problems)}/${p.problems}`;
+  renderPOV(null, 'waiting');
 }
 
-function handleToolClick(toolId) {
-  if (!state.currentProcedure) return;
-  const step = state.currentProcedure.steps[state.currentStep];
-  if (!step) return;
+function pickTool(id) {
+  if (!S.proc || S.phase !== 'call') return;
+  const st = S.proc.steps[S.step];
+  if (!st) return;
+  const btn = $('tool-' + id);
 
-  const btn = document.getElementById(`tool-${toolId}`);
+  if (id === st.t) {
+    const dt = (Date.now() - S.ts) / 1000;
+    const pts = dt < 2 ? 15 : dt < 4 ? 10 : 5;
+    S.score += pts; S.ok++;
+    $('dScore').textContent = S.score;
+    btn.classList.add('ok');
+    fb('✓','ok'); fpts(`+${pts}`, btn);
 
-  if (toolId === step.tool) {
-    const timeTaken = (Date.now() - state.stepStartTime) / 1000;
-    let points = 10;
-    if (timeTaken < 2) points = 15;
-    else if (timeTaken < 4) points = 10;
-    else points = 5;
-
-    state.score += points;
-    state.correctCount++;
-    document.getElementById('displayScore').textContent = state.score;
-
-    btn.classList.add('correct-flash');
-    showFeedback('✓', 'correct');
-    showPoints(`+${points}`, btn);
-
-    state.currentStep++;
-    setTimeout(() => showStep(), 600);
-  } else {
-    state.wrongCount++;
-    state.mood = Math.max(0, state.mood - 10);
-    updateMoodDisplay();
-
-    btn.classList.add('wrong-flash');
-    showFeedback('✗', 'wrong');
-    showPoints('-10 mood', btn);
-
+    renderPOV(id, 'holding');
     setTimeout(() => {
-      btn.classList.remove('wrong-flash');
-    }, 500);
+      renderPOV(id, 'passing');
+      S.step++;
+      setTimeout(() => showStep(), 500);
+    }, 400);
+  } else {
+    S.bad++; S.mood = Math.max(0, S.mood - 10); updateMood();
+    btn.classList.add('bad'); fb('✗','bad'); fpts('-10', btn);
+    setTimeout(() => btn.classList.remove('bad'), 400);
   }
 }
 
 function treatmentDone() {
-  const proc = state.currentProcedure;
-  document.getElementById('problemsCount').textContent = `${proc.problems}/${proc.problems} selesai`;
-  document.getElementById('dentistSpeech').textContent = 'Bagus! Rawatan selesai. Bersihkan dan panggil pesakit seterusnya.';
-
-  const activeTooth = document.getElementById(`tooth-${proc.toothNum}`);
-  if (activeTooth) {
-    activeTooth.classList.remove('active');
-    activeTooth.classList.add('treated');
-  }
-
+  const p = S.proc;
+  $('patProg').textContent = `${p.problems}/${p.problems}`;
+  $('drSpeech').textContent = 'Bagus! Rawatan selesai. Sediakan infection control.';
+  renderPOV(null, '');
   stopTimer();
 
-  const patientTime = (Date.now() - state.patientStartTime) / 1000;
-  if (patientTime < state.fastestTime) state.fastestTime = patientTime;
+  const pt = (Date.now() - S.t0) / 1000;
+  if (pt < S.fastest) S.fastest = pt;
 
-  const rank = RANKS[state.currentRank];
-  const moodBonus = Math.round(state.mood / 20);
-  const salary = rank.salary + moodBonus * 10;
-  state.salaryEarned += salary;
-  state.moodSum += state.mood;
-  state.patientsCompleted++;
-  state.patientIndex++;
+  const r = RANKS[S.rank];
+  S.salary += r.sal + Math.round(S.mood / 20) * 10;
+  S.moodSum += S.mood;
+  S.done++; S.pi++;
+  $('dCount').textContent = `${S.done}/${S.maxP}`;
 
-  document.getElementById('patientCounter').textContent = `${state.patientsCompleted}/${state.maxPatients}`;
-
-  document.getElementById('btnComplete').style.display = 'block';
+  $('btnDone').hidden = false;
 }
 
-function completePatient() {
-  document.getElementById('btnComplete').style.display = 'none';
-  document.getElementById('patientBar').style.display = 'none';
-  document.getElementById('moodArea').style.display = 'none';
-  document.getElementById('dentistArea').style.display = 'none';
-  document.getElementById('dentalView').style.display = 'none';
-  document.getElementById('toolTray').style.display = 'none';
-  document.getElementById('timerArea').style.display = 'none';
+function finishPatient() {
+  $('btnDone').hidden = true;
+  $('patBar').hidden = true; $('moodRow').hidden = true;
+  $('drArea').hidden = true; $('povArea').hidden = true;
+  $('toolTray').hidden = true; $('timerArea').hidden = true;
 
-  state.totalScore += state.score;
-  checkPromotion();
+  S.totalScore += S.score;
+  checkPromo();
+  startIC();
+}
 
-  if (state.patientIndex >= state.procedures.length) {
-    setTimeout(endDay, 500);
+/* ===== INFECTION CONTROL MINI-GAME ===== */
+function startIC() {
+  S.phase = 'ic'; S.icStep = 0;
+  $('icPhase').hidden = false;
+  renderIC();
+}
+
+function renderIC() {
+  const g = $('icGrid');
+  g.innerHTML = '';
+  const shuffled = shuffle([...IC_STEPS]);
+  shuffled.forEach(step => {
+    const btn = document.createElement('button');
+    btn.className = 'ic-btn';
+    btn.dataset.id = step.id;
+    btn.innerHTML = `<span class="ic-icon">${step.icon}</span><span>${step.label}</span>`;
+    btn.addEventListener('click', () => pickIC(step.id, btn));
+    g.appendChild(btn);
+  });
+  $('icCounter').textContent = `Langkah ${S.icStep + 1}/${IC_STEPS.length}`;
+}
+
+function pickIC(id, btn) {
+  const expected = IC_STEPS[S.icStep];
+  if (id === expected.id) {
+    S.icOk++;
+    btn.classList.add('done');
+    S.score += 5;
+    $('dScore').textContent = S.score;
+    fb('✓','ok');
+    S.icStep++;
+    $('icCounter').textContent = S.icStep < IC_STEPS.length
+      ? `Langkah ${S.icStep + 1}/${IC_STEPS.length}`
+      : 'Semua selesai! ✅';
+
+    if (S.icStep >= IC_STEPS.length) {
+      setTimeout(endIC, 600);
+    }
   } else {
-    document.getElementById('callArea').style.display = 'flex';
+    S.icBad++;
+    btn.classList.add('wrong');
+    fb('✗','bad');
+    setTimeout(() => btn.classList.remove('wrong'), 400);
   }
 }
 
+function endIC() {
+  $('icPhase').hidden = true;
+  S.phase = 'call';
+
+  if (S.pi >= S.procs.length) {
+    setTimeout(endDay, 300);
+  } else {
+    $('callArea').hidden = false;
+  }
+}
+
+/* ===== TIMER ===== */
 function startTimer() {
-  state.timerValue = 100;
-  const fill = document.getElementById('timerFill');
-  fill.style.width = '100%';
-  fill.className = 'timer-fill';
-
-  if (state.timerInterval) clearInterval(state.timerInterval);
-
-  state.timerInterval = setInterval(() => {
-    state.timerValue -= 0.5;
-    if (state.timerValue <= 0) {
-      state.timerValue = 0;
-      state.mood = Math.max(0, state.mood - 2);
-      updateMoodDisplay();
-    }
-
-    fill.style.width = state.timerValue + '%';
-    if (state.timerValue < 20) fill.className = 'timer-fill danger';
-    else if (state.timerValue < 50) fill.className = 'timer-fill warning';
-    else fill.className = 'timer-fill';
+  S.tv = 100;
+  const f = $('timerFill'); f.style.width = '100%'; f.className = 'timer-fill';
+  if (S.timer) clearInterval(S.timer);
+  S.timer = setInterval(() => {
+    S.tv -= 0.5;
+    if (S.tv <= 0) { S.tv = 0; S.mood = Math.max(0, S.mood - 2); updateMood(); }
+    f.style.width = S.tv + '%';
+    f.className = 'timer-fill' + (S.tv < 20 ? ' danger' : S.tv < 50 ? ' warn' : '');
   }, 200);
 }
+function stopTimer() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
 
-function stopTimer() {
-  if (state.timerInterval) {
-    clearInterval(state.timerInterval);
-    state.timerInterval = null;
+function updateMood() {
+  $('moodFill').style.width = S.mood + '%';
+  $('moodE').textContent = S.mood >= 80 ? '😊' : S.mood >= 60 ? '😐' : S.mood >= 40 ? '😟' : S.mood >= 20 ? '😠' : '🤬';
+}
+
+function fb(txt, cls) {
+  const e = document.createElement('div');
+  e.className = 'fb ' + cls; e.textContent = txt;
+  document.body.appendChild(e); setTimeout(() => e.remove(), 700);
+}
+function fpts(txt, ref) {
+  const e = document.createElement('div');
+  e.className = 'pts'; e.textContent = txt;
+  e.style.color = txt.startsWith('+') ? 'var(--green)' : 'var(--red)';
+  const r = ref.getBoundingClientRect();
+  e.style.left = r.left + r.width / 2 - 20 + 'px';
+  e.style.top = r.top - 8 + 'px';
+  document.body.appendChild(e); setTimeout(() => e.remove(), 800);
+}
+
+function checkPromo() {
+  const nx = S.rank + 1;
+  if (nx < RANKS.length && S.totalScore >= RANKS[nx].min) {
+    S.rank = nx; const rk = RANKS[nx];
+    $('dRank').textContent = rk.title;
+    $('pRank').textContent = rk.title;
+    $('pName').textContent = S.name;
+    const ul = $('pPerks'); ul.innerHTML = '';
+    rk.perks.forEach(p => { const li = document.createElement('li'); li.textContent = p; ul.appendChild(li); });
+    $('promoModal').classList.add('on');
   }
-}
-
-function updateMoodDisplay() {
-  const fill = document.getElementById('moodFill');
-  const emoji = document.getElementById('moodEmoji');
-  fill.style.width = state.mood + '%';
-
-  if (state.mood >= 80) emoji.textContent = '😊';
-  else if (state.mood >= 60) emoji.textContent = '😐';
-  else if (state.mood >= 40) emoji.textContent = '😟';
-  else if (state.mood >= 20) emoji.textContent = '😠';
-  else emoji.textContent = '🤬';
-}
-
-function showFeedback(text, type) {
-  const el = document.createElement('div');
-  el.className = `feedback ${type}`;
-  el.textContent = text;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 800);
-}
-
-function showPoints(text, refEl) {
-  const el = document.createElement('div');
-  el.className = 'points-popup';
-  el.textContent = text;
-  el.style.color = text.startsWith('+') ? 'var(--green)' : 'var(--red)';
-
-  const rect = refEl.getBoundingClientRect();
-  el.style.left = rect.left + rect.width / 2 - 30 + 'px';
-  el.style.top = rect.top - 10 + 'px';
-
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 1000);
-}
-
-function checkPromotion() {
-  const nextRank = state.currentRank + 1;
-  if (nextRank < RANKS.length && state.totalScore >= RANKS[nextRank].minScore) {
-    state.currentRank = nextRank;
-    const rank = RANKS[nextRank];
-
-    document.getElementById('displayRank').textContent = rank.title;
-    document.getElementById('promoRank').textContent = rank.title;
-    document.getElementById('promoName').textContent = state.playerName;
-
-    const perksList = document.getElementById('promoPerks');
-    perksList.innerHTML = '';
-    rank.perks.forEach(p => {
-      const li = document.createElement('li');
-      li.textContent = p;
-      perksList.appendChild(li);
-    });
-
-    document.getElementById('promoModal').classList.add('active');
-  }
-}
-
-function closePromo() {
-  document.getElementById('promoModal').classList.remove('active');
-}
-
-function sharePromo() {
-  const rank = RANKS[state.currentRank];
-  const text = `🏅 SURAT KENAIKAN PANGKAT!\n\nTahniah, ${state.playerName} dinaikkan ke ${rank.title}!\n\n🦷 Dental Nurse Hero\n#DentalNurseHero #WiraJururawatPergigian`;
-  shareText(text);
 }
 
 function endDay() {
-  const totalAttempts = state.correctCount + state.wrongCount;
-  const accuracy = totalAttempts > 0 ? Math.round((state.correctCount / totalAttempts) * 100) : 0;
-  const avgMood = state.patientsCompleted > 0 ? Math.round(state.moodSum / state.patientsCompleted) : 0;
+  const tot = S.ok + S.bad, acc = tot > 0 ? Math.round(S.ok / tot * 100) : 0;
+  const avg = S.done > 0 ? Math.round(S.moodSum / S.done) : 0;
+  const icTot = S.icOk + S.icBad, icAcc = icTot > 0 ? Math.round(S.icOk / icTot * 100) : 0;
 
   let stars = 1;
-  if (accuracy >= 90 && avgMood >= 70) stars = 3;
-  else if (accuracy >= 70 && avgMood >= 50) stars = 2;
+  if (acc >= 90 && avg >= 70) stars = 3;
+  else if (acc >= 70 && avg >= 50) stars = 2;
 
-  document.getElementById('summaryStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-  document.getElementById('summaryScore').textContent = state.score;
-  document.getElementById('summarySalary').textContent = `+RM${state.salaryEarned.toLocaleString()}`;
-  document.getElementById('summaryPatients').textContent = state.patientsCompleted;
-  document.getElementById('summaryAccuracy').textContent = accuracy + '%';
+  $('sStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+  $('sScore').textContent = S.score;
+  $('sSalary').textContent = `+RM${S.salary.toLocaleString()}`;
+  $('sPats').textContent = S.done;
+  $('sAcc').textContent = acc + '%';
+  $('sIC').textContent = icAcc + '%';
 
-  if (state.fastestTime < Infinity) {
-    document.getElementById('summaryFastest').textContent = Math.round(state.fastestTime) + 's';
-  }
+  let me = '😊', mt = `Baik - ${avg}%`;
+  if (avg < 40) { me = '😟'; mt = `Kurang - ${avg}%`; }
+  else if (avg < 70) { me = '😐'; mt = `Okay - ${avg}%`; }
+  $('sMoodE').textContent = me; $('sMoodT').textContent = mt;
 
-  let moodEmoji = '😊', moodText = `Baik - ${avgMood}%`;
-  if (avgMood < 40) { moodEmoji = '😟'; moodText = `Kurang - ${avgMood}%`; }
-  else if (avgMood < 70) { moodEmoji = '😐'; moodText = `Okay - ${avgMood}%`; }
-
-  document.getElementById('summaryMoodEmoji').textContent = moodEmoji;
-  document.getElementById('summaryMoodText').textContent = moodText;
-
-  showScreen('summaryScreen');
+  show('summaryScreen');
 }
 
 function shareResult() {
-  const totalAttempts = state.correctCount + state.wrongCount;
-  const accuracy = totalAttempts > 0 ? Math.round((state.correctCount / totalAttempts) * 100) : 0;
-  const text = `🦷 Dental Nurse Hero\n\n⭐ ${state.score} Mata\n💰 Gaji: RM${state.salaryEarned}\n✅ Ketepatan: ${accuracy}%\n👥 ${state.patientsCompleted} pesakit dirawat\n🏅 ${RANKS[state.currentRank].title}\n\n#DentalNurseHero`;
-  shareText(text);
+  const tot = S.ok + S.bad, acc = tot > 0 ? Math.round(S.ok / tot * 100) : 0;
+  const t = `🦷 Dental Nurse Hero\n\n⭐ ${S.score} Mata\n💰 Gaji: RM${S.salary}\n✅ Ketepatan: ${acc}%\n👥 ${S.done} pesakit\n🧤 IC: ${Math.round(S.icOk/(S.icOk+S.icBad||1)*100)}%\n🏅 ${RANKS[S.rank].title}\n\n#DentalNurseHero`;
+  doShare(t);
+}
+function sharePromo() {
+  doShare(`🏅 KENAIKAN PANGKAT!\n\nTahniah, ${S.name} → ${RANKS[S.rank].title}!\n\n🦷 Dental Nurse Hero\n#DentalNurseHero`);
+}
+function doShare(t) {
+  if (navigator.share) navigator.share({text:t}).catch(()=>{});
+  else if (navigator.clipboard) navigator.clipboard.writeText(t).then(()=>{}).catch(()=>{});
 }
 
-function shareText(text) {
-  if (navigator.share) {
-    navigator.share({ text }).catch(() => {});
-  } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Disalin! Tampal di WhatsApp atau media sosial.');
-    });
-  } else {
-    prompt('Salin teks ini:', text);
-  }
-}
-
-function playAgain() {
-  state.score = 0;
-  showScreen('startScreen');
-}
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
 }
 </script>
-</body>
-</html>

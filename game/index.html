@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Dental Nurse Hero</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #0f1923;
+  --card: #1a2a3a;
+  --card2: #243447;
+  --accent: #00bcd4;
+  --accent2: #ff9800;
+  --gold: #ffd700;
+  --green: #4caf50;
+  --red: #f44336;
+  --pink: #e91e63;
+  --text: #e8edf2;
+  --text2: #8899aa;
+  --white: #ffffff;
+}
+
+html, body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+  touch-action: manipulation;
+}
+
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ===== START SCREEN ===== */
+#startScreen {
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0a1628 100%);
+}
+
+.logo-area { margin-bottom: 30px; }
+
+.logo-icon {
+  width: 120px; height: 120px;
+  background: linear-gradient(135deg, var(--accent), #0097a7);
+  border-radius: 30px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 60px;
+  box-shadow: 0 8px 32px rgba(0, 188, 212, 0.3);
+}
+
+.logo-title {
+  font-size: 32px; font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logo-sub { font-size: 14px; color: var(--text2); margin-top: 4px; }
+
+.name-input-area { width: 100%; max-width: 320px; margin-bottom: 24px; }
+
+.name-input-area label {
+  display: block; font-size: 14px; color: var(--text2);
+  margin-bottom: 8px; text-align: left;
+}
+
+.name-input {
+  width: 100%; padding: 14px 16px;
+  background: var(--card); border: 2px solid var(--card2);
+  border-radius: 12px; color: var(--text);
+  font-family: 'Nunito', sans-serif; font-size: 16px;
+  outline: none; transition: border-color 0.2s;
+}
+
+.name-input:focus { border-color: var(--accent); }
+
+.btn-start {
+  width: 100%; max-width: 320px;
+  padding: 16px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), #0097a7);
+  color: var(--white); font-family: 'Nunito', sans-serif;
+  font-size: 18px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 188, 212, 0.4);
+  transition: transform 0.1s;
+}
+
+.btn-start:active { transform: scale(0.96); }
+
+/* ===== GAME SCREEN ===== */
+#gameScreen { background: var(--bg); }
+
+.top-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--card);
+  border-bottom: 1px solid var(--card2);
+}
+
+.top-bar-left { display: flex; align-items: center; gap: 8px; }
+
+.nurse-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+.nurse-info .nurse-name { font-size: 13px; font-weight: 700; }
+.nurse-info .nurse-rank { font-size: 11px; color: var(--accent); }
+
+.top-bar-right { display: flex; align-items: center; gap: 12px; }
+
+.score-badge {
+  background: var(--card2); padding: 4px 12px;
+  border-radius: 20px; font-size: 13px; font-weight: 700;
+}
+
+.score-badge span { color: var(--gold); }
+
+.patient-counter {
+  font-size: 12px; color: var(--text2);
+}
+
+/* Patient Info Bar */
+.patient-bar {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--card2), var(--card));
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.patient-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.patient-id { font-size: 13px; font-weight: 700; }
+
+.problems-count {
+  font-size: 12px; padding: 2px 10px;
+  background: var(--accent); border-radius: 10px;
+  color: var(--bg); font-weight: 700;
+}
+
+.patient-complaint {
+  font-size: 13px; color: var(--text2);
+  padding: 8px 12px; background: rgba(0,0,0,0.2);
+  border-radius: 8px; border-left: 3px solid var(--accent2);
+}
+
+.patient-complaint strong { color: var(--accent2); }
+
+/* Mood Bar */
+.mood-bar-container {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; font-size: 12px;
+}
+
+.mood-label { color: var(--text2); white-space: nowrap; }
+
+.mood-bar-track {
+  flex: 1; height: 8px; background: var(--card2);
+  border-radius: 4px; overflow: hidden;
+}
+
+.mood-bar-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--red), var(--accent2), var(--green));
+  transition: width 0.5s ease;
+}
+
+.mood-emoji { font-size: 18px; }
+
+/* Dentist Speech */
+.dentist-area {
+  padding: 12px 16px;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+
+.dentist-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, #7c4dff, #536dfe);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+
+.dentist-bubble {
+  background: var(--card2); border-radius: 4px 16px 16px 16px;
+  padding: 12px 16px; font-size: 14px; font-weight: 600;
+  flex: 1; position: relative;
+  animation: bubblePop 0.3s ease;
+}
+
+@keyframes bubblePop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.dentist-name { font-size: 11px; color: #7c4dff; margin-bottom: 4px; }
+
+/* Timer */
+.timer-bar {
+  height: 4px; background: var(--card2);
+  margin: 0 16px;
+}
+
+.timer-fill {
+  height: 100%; background: var(--green);
+  transition: width 0.1s linear, background-color 0.3s;
+  border-radius: 2px;
+}
+
+.timer-fill.warning { background: var(--accent2); }
+.timer-fill.danger { background: var(--red); }
+
+/* Dental View */
+.dental-view {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 16px; position: relative;
+}
+
+.mouth-container {
+  width: 280px; height: 200px;
+  position: relative;
+}
+
+.tooth {
+  position: absolute;
+  width: 28px; height: 28px;
+  background: #f5f0e8;
+  border: 2px solid #d4c9b8;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tooth.active {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: var(--white);
+  animation: toothPulse 1s ease infinite;
+  box-shadow: 0 0 12px rgba(255, 152, 0, 0.5);
+}
+
+.tooth.treated {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--white);
+}
+
+@keyframes toothPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Upper arch */
+.upper-arch { position: relative; width: 100%; height: 50%; }
+.lower-arch { position: relative; width: 100%; height: 50%; }
+
+/* Feedback overlay */
+.feedback {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px; font-weight: 900;
+  pointer-events: none; z-index: 100;
+  animation: feedbackAnim 0.8s ease forwards;
+}
+
+@keyframes feedbackAnim {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(1); }
+}
+
+.feedback.correct { color: var(--green); }
+.feedback.wrong { color: var(--red); }
+
+.points-popup {
+  position: fixed;
+  font-size: 24px; font-weight: 900;
+  pointer-events: none; z-index: 100;
+  animation: pointsFloat 1s ease forwards;
+}
+
+@keyframes pointsFloat {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-60px); }
+}
+
+/* Tool Tray */
+.tool-tray {
+  padding: 8px 12px 20px;
+  background: var(--card);
+  border-top: 1px solid var(--card2);
+}
+
+.tray-label {
+  font-size: 11px; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 8px; padding-left: 4px;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.tool-btn {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  padding: 10px 4px;
+  background: var(--card2);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-user-select: none; user-select: none;
+}
+
+.tool-btn:active { transform: scale(0.92); }
+
+.tool-btn .tool-icon { font-size: 24px; }
+
+.tool-btn .tool-name {
+  font-size: 10px; font-weight: 700;
+  color: var(--text2); text-align: center;
+  line-height: 1.2;
+}
+
+.tool-btn.highlight {
+  border-color: var(--accent);
+  background: rgba(0, 188, 212, 0.1);
+  animation: toolGlow 1.5s ease infinite;
+}
+
+@keyframes toolGlow {
+  0%, 100% { box-shadow: 0 0 0 rgba(0, 188, 212, 0); }
+  50% { box-shadow: 0 0 16px rgba(0, 188, 212, 0.3); }
+}
+
+.tool-btn.correct-flash {
+  border-color: var(--green);
+  background: rgba(76, 175, 80, 0.2);
+}
+
+.tool-btn.wrong-flash {
+  border-color: var(--red);
+  background: rgba(244, 67, 54, 0.2);
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Call Patient Button */
+.call-patient-area {
+  flex: 1; display: flex;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+
+.btn-call {
+  padding: 16px 40px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, var(--green), #388e3c);
+  color: var(--white); font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
+  transition: transform 0.1s;
+}
+
+.btn-call:active { transform: scale(0.96); }
+
+/* Complete Button */
+.btn-complete {
+  margin: 0 16px 8px;
+  padding: 14px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--green), #388e3c);
+  color: var(--white); font-family: 'Nunito', sans-serif;
+  font-size: 15px; font-weight: 800; cursor: pointer;
+  display: none;
+}
+
+.btn-complete:active { transform: scale(0.96); }
+
+/* ===== SUMMARY SCREEN ===== */
+#summaryScreen {
+  align-items: center; justify-content: center;
+  padding: 20px; text-align: center;
+  background: linear-gradient(135deg, #0a1628, #1a2a4a);
+}
+
+.summary-card {
+  width: 100%; max-width: 360px;
+  background: linear-gradient(135deg, var(--card), var(--card2));
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.summary-header {
+  padding: 24px 20px 16px;
+  background: linear-gradient(135deg, var(--accent), #0097a7);
+}
+
+.summary-stars { font-size: 36px; margin-bottom: 8px; }
+
+.summary-score {
+  font-size: 48px; font-weight: 900; color: var(--white);
+}
+
+.summary-score-label {
+  font-size: 14px; color: rgba(255,255,255,0.8);
+  text-transform: uppercase; letter-spacing: 2px;
+}
+
+.summary-body { padding: 20px; }
+
+.summary-row {
+  display: flex; justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px;
+}
+
+.summary-row:last-child { border: none; }
+
+.summary-row .label { color: var(--text2); }
+
+.summary-row .value { font-weight: 700; }
+
+.summary-row .value.salary { color: var(--green); }
+
+.summary-mood {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 12px; margin: 12px 0;
+  background: rgba(0,0,0,0.2); border-radius: 12px;
+}
+
+.summary-actions {
+  display: flex; gap: 10px; padding: 16px 20px;
+}
+
+.btn-share, .btn-again {
+  flex: 1; padding: 14px; border: none; border-radius: 12px;
+  font-family: 'Nunito', sans-serif; font-size: 14px;
+  font-weight: 800; cursor: pointer;
+}
+
+.btn-share {
+  background: var(--card2); color: var(--text);
+}
+
+.btn-again {
+  background: linear-gradient(135deg, var(--accent), #0097a7);
+  color: var(--white);
+}
+
+/* ===== PROMOTION MODAL ===== */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8); z-index: 200;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.active { display: flex; }
+
+.promo-card {
+  width: 100%; max-width: 340px;
+  background: linear-gradient(135deg, #1a2a3a, #243447);
+  border-radius: 20px; overflow: hidden;
+  animation: modalPop 0.4s ease;
+  text-align: center;
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.promo-header {
+  padding: 24px 20px;
+  background: linear-gradient(135deg, var(--gold), #ff9800);
+}
+
+.promo-icon { font-size: 48px; margin-bottom: 8px; }
+
+.promo-title {
+  font-size: 12px; font-weight: 800;
+  color: rgba(0,0,0,0.6); text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.promo-rank {
+  font-size: 22px; font-weight: 900; color: var(--bg);
+  margin-top: 4px;
+}
+
+.promo-body { padding: 20px; text-align: left; }
+
+.promo-body p {
+  font-size: 13px; color: var(--text2);
+  margin-bottom: 12px; text-align: center;
+}
+
+.promo-body p strong { color: var(--text); }
+
+.promo-perks { list-style: none; padding: 0; }
+
+.promo-perks li {
+  font-size: 13px; padding: 6px 0;
+  color: var(--text);
+}
+
+.promo-footer {
+  display: flex; gap: 10px; padding: 16px 20px;
+}
+
+.promo-footer button {
+  flex: 1; padding: 12px; border: none; border-radius: 12px;
+  font-family: 'Nunito', sans-serif; font-size: 14px;
+  font-weight: 800; cursor: pointer;
+}
+
+.btn-promo-share { background: var(--card2); color: var(--text); }
+.btn-promo-ok {
+  background: linear-gradient(135deg, var(--gold), var(--accent2));
+  color: var(--bg);
+}
+
+/* ===== INSTRUCTIONS OVERLAY ===== */
+.instructions-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 200;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+
+.instructions-overlay.active { display: flex; }
+
+.instructions-card {
+  width: 100%; max-width: 360px;
+  background: var(--card); border-radius: 20px;
+  padding: 24px; max-height: 80vh; overflow-y: auto;
+}
+
+.instructions-card h2 {
+  font-size: 20px; margin-bottom: 16px;
+  text-align: center;
+}
+
+.instruction-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0;
+}
+
+.instruction-item .step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent); color: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; flex-shrink: 0;
+}
+
+.instruction-item p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.instruction-item p strong { color: var(--text); }
+
+.btn-understand {
+  width: 100%; padding: 14px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #0097a7);
+  color: var(--white); font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  margin-top: 16px;
+}
+
+/* Waiting indicator */
+.waiting-area {
+  text-align: center; padding: 30px;
+  color: var(--text2); font-size: 14px;
+}
+
+.waiting-area .waiting-icon {
+  font-size: 48px; margin-bottom: 12px;
+  animation: float 2s ease infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen" class="screen active">
+  <div class="logo-area">
+    <div class="logo-icon">🦷</div>
+    <div class="logo-title">Dental Nurse Hero</div>
+    <div class="logo-sub">Wira Jururawat Pergigian</div>
+  </div>
+
+  <div class="name-input-area">
+    <label>Nama Anda / Your Name</label>
+    <input type="text" class="name-input" id="playerName" placeholder="Nurse Aini" maxlength="20">
+  </div>
+
+  <button class="btn-start" onclick="startGame()">Mula Shift! 🏥</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen" class="screen">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="nurse-avatar">👩‍⚕️</div>
+      <div class="nurse-info">
+        <div class="nurse-name" id="displayName">Nurse Aini</div>
+        <div class="nurse-rank" id="displayRank">Jururawat Pergigian</div>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <div class="score-badge">⭐ <span id="displayScore">0</span></div>
+      <div class="patient-counter" id="patientCounter">0/8</div>
+    </div>
+  </div>
+
+  <div id="patientBar" class="patient-bar" style="display:none;">
+    <div class="patient-header">
+      <div class="patient-id" id="patientId">Pesakit #2001</div>
+      <div class="problems-count" id="problemsCount">0/2 selesai</div>
+    </div>
+    <div class="patient-complaint" id="patientComplaint">
+      <strong>Aduan:</strong> Sakit gigi belakang
+    </div>
+  </div>
+
+  <div id="moodArea" class="mood-bar-container" style="display:none;">
+    <span class="mood-label">Mood Pesakit</span>
+    <div class="mood-bar-track">
+      <div class="mood-bar-fill" id="moodFill" style="width: 100%"></div>
+    </div>
+    <span class="mood-emoji" id="moodEmoji">😊</span>
+  </div>
+
+  <div id="dentistArea" class="dentist-area" style="display:none;">
+    <div class="dentist-avatar">🧑‍⚕️</div>
+    <div class="dentist-bubble">
+      <div class="dentist-name">Dr. Halim</div>
+      <div id="dentistSpeech">Sedia kan cermin mulut.</div>
+    </div>
+  </div>
+
+  <div id="timerArea" class="timer-bar" style="display:none;">
+    <div class="timer-fill" id="timerFill" style="width: 100%"></div>
+  </div>
+
+  <div id="dentalView" class="dental-view" style="display:none;">
+    <div class="mouth-container" id="mouthContainer"></div>
+  </div>
+
+  <div id="callArea" class="call-patient-area">
+    <div style="text-align:center;">
+      <div class="waiting-area">
+        <div class="waiting-icon">🪑</div>
+        <div>Ruang menunggu penuh!</div>
+        <div style="font-size:12px; margin-top:4px;">Tekan butang untuk panggil pesakit</div>
+      </div>
+      <button class="btn-call" onclick="callNextPatient()">📢 Panggil Pesakit</button>
+    </div>
+  </div>
+
+  <button class="btn-complete" id="btnComplete" onclick="completePatient()">
+    ✅ Siap Rawatan
+  </button>
+
+  <div id="toolTray" class="tool-tray" style="display:none;">
+    <div class="tray-label">🧰 Tray Alatan</div>
+    <div class="tools-grid" id="toolsGrid"></div>
+  </div>
+</div>
+
+<!-- SUMMARY SCREEN -->
+<div id="summaryScreen" class="screen">
+  <div class="summary-card">
+    <div class="summary-header">
+      <div class="summary-stars" id="summaryStars">⭐⭐⭐</div>
+      <div class="summary-score" id="summaryScore">0</div>
+      <div class="summary-score-label">MATA</div>
+    </div>
+    <div class="summary-body">
+      <div class="summary-mood" id="summaryMood">
+        <span>Mood akhir:</span>
+        <span id="summaryMoodEmoji">😊</span>
+        <span id="summaryMoodText">Baik - 80%</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">💰 Gaji hari ini</span>
+        <span class="value salary" id="summarySalary">+RM0</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">👥 Pesakit dirawat</span>
+        <span class="value" id="summaryPatients">0</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">✅ Ketepatan</span>
+        <span class="value" id="summaryAccuracy">0%</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">⚡ Terpantas</span>
+        <span class="value" id="summaryFastest">-</span>
+      </div>
+    </div>
+    <div class="summary-actions">
+      <button class="btn-share" onclick="shareResult()">📤 Kongsi</button>
+      <button class="btn-again" onclick="playAgain()">🔄 Main Lagi</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROMOTION MODAL -->
+<div class="modal-overlay" id="promoModal">
+  <div class="promo-card">
+    <div class="promo-header">
+      <div class="promo-icon">🏅</div>
+      <div class="promo-title">SURAT KENAIKAN PANGKAT</div>
+      <div class="promo-rank" id="promoRank">Jururawat Pergigian Kanan</div>
+    </div>
+    <div class="promo-body">
+      <p>Dengan ini <strong id="promoName">Nurse Aini</strong> dinaikkan pangkat atas prestasi cemerlang! 🎉</p>
+      <ul class="promo-perks" id="promoPerks"></ul>
+    </div>
+    <div class="promo-footer">
+      <button class="btn-promo-share" onclick="sharePromo()">📤 Kongsi</button>
+      <button class="btn-promo-ok" onclick="closePromo()">Terima kasih! 🎉</button>
+    </div>
+  </div>
+</div>
+
+<!-- INSTRUCTIONS OVERLAY -->
+<div class="instructions-overlay" id="instructionsOverlay">
+  <div class="instructions-card">
+    <h2>📋 Cara Bermain</h2>
+    <div class="instruction-item">
+      <div class="step-num">1</div>
+      <p><strong>Panggil pesakit</strong> dari ruang menunggu untuk mulakan rawatan.</p>
+    </div>
+    <div class="instruction-item">
+      <div class="step-num">2</div>
+      <p><strong>Dr. Halim akan arahkan</strong> alat yang diperlukan. Dengar arahan beliau!</p>
+    </div>
+    <div class="instruction-item">
+      <div class="step-num">3</div>
+      <p><strong>Pilih alat yang betul</strong> dari tray alatan di bawah. Cepat dan tepat!</p>
+    </div>
+    <div class="instruction-item">
+      <div class="step-num">4</div>
+      <p><strong>Mood pesakit</strong> akan turun jika lambat atau silap. Jaga mood mereka!</p>
+    </div>
+    <div class="instruction-item">
+      <div class="step-num">5</div>
+      <p><strong>Kumpul mata</strong> untuk naik pangkat dan buka kes baru!</p>
+    </div>
+    <button class="btn-understand" onclick="closeInstructions()">Faham! Jom mula! 💪</button>
+  </div>
+</div>
+
+<script>
+const TOOLS = [
+  { id: 'mirror', name: 'Cermin\nMulut', icon: '🔍', desc: 'Mouth mirror' },
+  { id: 'probe', name: 'Probe', icon: '🪝', desc: 'Explorer probe' },
+  { id: 'scaler', name: 'Skaler', icon: '⚒️', desc: 'Scaler' },
+  { id: 'suction', name: 'Penyedut', icon: '💨', desc: 'Suction' },
+  { id: 'drill', name: 'Gerudi', icon: '🔧', desc: 'Handpiece/Drill' },
+  { id: 'composite', name: 'Komposit', icon: '🧴', desc: 'Composite' },
+  { id: 'curinglight', name: 'Lampu\nCuring', icon: '🔦', desc: 'Curing light' },
+  { id: 'cotton', name: 'Kapas', icon: '☁️', desc: 'Cotton roll' },
+  { id: 'forceps', name: 'Forsep', icon: '🦾', desc: 'Extraction forceps' },
+  { id: 'elevator', name: 'Elevator', icon: '🗡️', desc: 'Elevator' },
+  { id: 'impression', name: 'Acuan', icon: '🫧', desc: 'Impression tray' },
+  { id: 'fluoride', name: 'Fluorida', icon: '💧', desc: 'Fluoride' },
+];
+
+const PROCEDURES = [
+  {
+    type: 'Pemeriksaan',
+    complaint: 'Sakit gigi bila makan manis',
+    toothNum: 36,
+    steps: [
+      { tool: 'mirror', speech: 'Sediakan cermin mulut untuk pemeriksaan.' },
+      { tool: 'probe', speech: 'Probe, saya nak periksa kaviti.' },
+      { tool: 'cotton', speech: 'Kapas untuk keringkan kawasan.' },
+    ],
+    problems: 1,
+  },
+  {
+    type: 'Scaling',
+    complaint: 'Gusi berdarah dan ada karang gigi',
+    toothNum: 31,
+    steps: [
+      { tool: 'mirror', speech: 'Cermin mulut dulu, nak tengok karang.' },
+      { tool: 'scaler', speech: 'Skaler, banyak karang ni.' },
+      { tool: 'suction', speech: 'Sedut air tu, jangan bagi lemas pesakit.' },
+      { tool: 'scaler', speech: 'Skaler lagi, bahagian bawah belum bersih.' },
+      { tool: 'suction', speech: 'Sedut lagi sekali.' },
+    ],
+    problems: 2,
+  },
+  {
+    type: 'Tampalan',
+    complaint: 'Lubang besar kat gigi depan, malu nak senyum',
+    toothNum: 11,
+    steps: [
+      { tool: 'mirror', speech: 'Cermin mulut, nak tengok kerosakan.' },
+      { tool: 'probe', speech: 'Probe untuk ukur kedalaman kaviti.' },
+      { tool: 'drill', speech: 'Gerudi, kena buang bahagian rosak.' },
+      { tool: 'suction', speech: 'Penyedut! Banyak air ni.' },
+      { tool: 'cotton', speech: 'Kapas, nak keringkan kawasan.' },
+      { tool: 'composite', speech: 'Komposit warna A2, sedia kan.' },
+      { tool: 'curinglight', speech: 'Lampu curing, 20 saat.' },
+    ],
+    problems: 2,
+  },
+  {
+    type: 'Cabutan',
+    complaint: 'Gigi goyang teruk, nak cabut je',
+    toothNum: 46,
+    steps: [
+      { tool: 'mirror', speech: 'Cermin mulut, nak periksa mobility.' },
+      { tool: 'probe', speech: 'Probe, nak check periodontal pocket.' },
+      { tool: 'elevator', speech: 'Elevator, nak longgarkan gigi dulu.' },
+      { tool: 'forceps', speech: 'Forsep sekarang. Pegang kuat.' },
+      { tool: 'cotton', speech: 'Kapas gauze, tekan kat soket tu.' },
+    ],
+    problems: 2,
+  },
+  {
+    type: 'Pemeriksaan',
+    complaint: 'Ngilu bila minum air sejuk',
+    toothNum: 24,
+    steps: [
+      { tool: 'mirror', speech: 'Cermin mulut untuk start.' },
+      { tool: 'probe', speech: 'Probe, saya nak periksa.' },
+      { tool: 'cotton', speech: 'Kapas, keringkan situ.' },
+      { tool: 'fluoride', speech: 'Sapu fluoride kat kawasan sensitif.' },
+    ],
+    problems: 1,
+  },
+  {
+    type: 'Tampalan',
+    complaint: 'Gigi pecah masa makan keropok',
+    toothNum: 15,
+    steps: [
+      { tool: 'mirror', speech: 'Cermin mulut.' },
+      { tool: 'drill', speech: 'Gerudi, buang bahagian tajam.' },
+      { tool: 'suction', speech: 'Penyedut cepat!' },
+      { tool: 'cotton', speech: 'Kapas.' },
+      { tool: 'composite', speech: 'Komposit, nak rebuild shape.' },
+      { tool: 'curinglight', speech: 'Lampu curing. Tahan steady.' },
+    ],
+    problems: 2,
+  },
+  {
+    type: 'Scaling',
+    complaint: 'Dah 2 tahun tak cuci gigi, banyak karang',
+    toothNum: 41,
+    steps: [
+      { tool: 'mirror', speech: 'Cermin mulut. Ya ampun banyaknya karang!' },
+      { tool: 'scaler', speech: 'Skaler dulu bahagian depan.' },
+      { tool: 'suction', speech: 'Sedut!' },
+      { tool: 'scaler', speech: 'Skaler lagi, bahagian belakang pulak.' },
+      { tool: 'suction', speech: 'Penyedut lagi.' },
+      { tool: 'fluoride', speech: 'Fluoride untuk polish.' },
+    ],
+    problems: 3,
+  },
+  {
+    type: 'Cabutan',
+    complaint: 'Wisdom tooth sakit sangat, tak boleh buka mulut',
+    toothNum: 48,
+    steps: [
+      { tool: 'mirror', speech: 'Cermin mulut, nak assess.' },
+      { tool: 'probe', speech: 'Probe, check ada infection tak.' },
+      { tool: 'elevator', speech: 'Elevator. Ni kes susah sikit.' },
+      { tool: 'suction', speech: 'Penyedut, banyak darah.' },
+      { tool: 'forceps', speech: 'Forsep, tarik perlahan.' },
+      { tool: 'cotton', speech: 'Gauze tekan kuat kat soket.' },
+    ],
+    problems: 2,
+  },
+];
+
+const RANKS = [
+  { title: 'Jururawat Pergigian', minScore: 0, salary: 80, perks: [] },
+  { title: 'Jururawat Pergigian Kanan', minScore: 200, salary: 120,
+    perks: ['💰 Gaji naik 50% + hadiah RM300', '🩺 Kes scaling dibuka', '👕 Baju biru gelap Jururawat Kanan'] },
+  { title: 'Penyelia Jururawat Pergigian', minScore: 500, salary: 180,
+    perks: ['💰 Gaji naik 50% + hadiah RM800', '🔧 Kes cabutan dibuka', '👥 Junior nurse bantu anda', '👕 Baju hijau Penyelia'] },
+  { title: 'Ketua Jururawat Pergigian', minScore: 1000, salary: 250,
+    perks: ['💰 Gaji naik 40% + hadiah RM1,500', '🦷 Semua kes dibuka', '⭐ Gelaran "Tangan Emas"', '👕 Baju emas Ketua Jururawat'] },
+];
+
+const TEETH_UPPER = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
+const TEETH_LOWER = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+
+let state = {
+  playerName: 'Nurse Aini',
+  score: 0,
+  totalScore: 0,
+  currentRank: 0,
+  patientIndex: 0,
+  maxPatients: 8,
+  currentProcedure: null,
+  currentStep: 0,
+  mood: 100,
+  correctCount: 0,
+  wrongCount: 0,
+  patientsCompleted: 0,
+  timerInterval: null,
+  timerValue: 100,
+  fastestTime: Infinity,
+  patientStartTime: 0,
+  stepStartTime: 0,
+  isFirstGame: true,
+  salaryEarned: 0,
+  avgMood: 0,
+  moodSum: 0,
+  procedures: [],
+};
+
+function initTeeth() {
+  const container = document.getElementById('mouthContainer');
+  container.innerHTML = '';
+
+  const archWidth = 280;
+  const cx = archWidth / 2;
+
+  TEETH_UPPER.forEach((num, i) => {
+    const tooth = document.createElement('div');
+    tooth.className = 'tooth';
+    tooth.id = `tooth-${num}`;
+    tooth.textContent = num;
+    const angle = Math.PI + (i / (TEETH_UPPER.length - 1)) * Math.PI;
+    const rx = 125, ry = 60;
+    const x = cx + rx * Math.cos(angle) - 14;
+    const y = 70 + ry * Math.sin(angle) - 14;
+    tooth.style.left = x + 'px';
+    tooth.style.top = y + 'px';
+    container.appendChild(tooth);
+  });
+
+  TEETH_LOWER.forEach((num, i) => {
+    const tooth = document.createElement('div');
+    tooth.className = 'tooth';
+    tooth.id = `tooth-${num}`;
+    tooth.textContent = num;
+    const angle = (i / (TEETH_LOWER.length - 1)) * Math.PI;
+    const rx = 125, ry = 55;
+    const x = cx + rx * Math.cos(angle) - 14;
+    const y = 110 + ry * Math.sin(angle) - 14;
+    tooth.style.left = x + 'px';
+    tooth.style.top = y + 'px';
+    container.appendChild(tooth);
+  });
+}
+
+function renderTools() {
+  const grid = document.getElementById('toolsGrid');
+  grid.innerHTML = '';
+  TOOLS.forEach(tool => {
+    const btn = document.createElement('div');
+    btn.className = 'tool-btn';
+    btn.id = `tool-${tool.id}`;
+    btn.innerHTML = `<span class="tool-icon">${tool.icon}</span><span class="tool-name">${tool.name}</span>`;
+    btn.addEventListener('click', () => handleToolClick(tool.id));
+    grid.appendChild(btn);
+  });
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  const nameInput = document.getElementById('playerName').value.trim();
+  state.playerName = nameInput || 'Nurse Aini';
+  state.score = 0;
+  state.patientIndex = 0;
+  state.patientsCompleted = 0;
+  state.correctCount = 0;
+  state.wrongCount = 0;
+  state.fastestTime = Infinity;
+  state.salaryEarned = 0;
+  state.moodSum = 0;
+  state.procedures = shuffle([...PROCEDURES]).slice(0, state.maxPatients);
+
+  document.getElementById('displayName').textContent = state.playerName;
+  document.getElementById('displayRank').textContent = RANKS[state.currentRank].title;
+  document.getElementById('displayScore').textContent = state.score;
+  document.getElementById('patientCounter').textContent = `0/${state.maxPatients}`;
+
+  showScreen('gameScreen');
+  renderTools();
+  initTeeth();
+
+  if (state.isFirstGame) {
+    document.getElementById('instructionsOverlay').classList.add('active');
+    state.isFirstGame = false;
+  }
+}
+
+function closeInstructions() {
+  document.getElementById('instructionsOverlay').classList.remove('active');
+}
+
+function callNextPatient() {
+  if (state.patientIndex >= state.procedures.length) {
+    endDay();
+    return;
+  }
+
+  const proc = state.procedures[state.patientIndex];
+  state.currentProcedure = proc;
+  state.currentStep = 0;
+  state.mood = 100;
+  state.patientStartTime = Date.now();
+
+  const patientNum = 2001 + state.patientIndex;
+  document.getElementById('patientId').textContent = `Pesakit #${patientNum} — ${proc.type}`;
+  document.getElementById('problemsCount').textContent = `0/${proc.problems} selesai`;
+  document.getElementById('patientComplaint').innerHTML = `<strong>Aduan:</strong> ${proc.complaint}`;
+
+  updateMoodDisplay();
+
+  document.getElementById('callArea').style.display = 'none';
+  document.getElementById('patientBar').style.display = 'block';
+  document.getElementById('moodArea').style.display = 'flex';
+  document.getElementById('dentistArea').style.display = 'flex';
+  document.getElementById('dentalView').style.display = 'flex';
+  document.getElementById('toolTray').style.display = 'block';
+  document.getElementById('timerArea').style.display = 'block';
+
+  document.querySelectorAll('.tooth').forEach(t => {
+    t.className = 'tooth';
+  });
+
+  const activeTooth = document.getElementById(`tooth-${proc.toothNum}`);
+  if (activeTooth) activeTooth.classList.add('active');
+
+  showStep();
+  startTimer();
+}
+
+function showStep() {
+  const proc = state.currentProcedure;
+  if (state.currentStep >= proc.steps.length) {
+    treatmentDone();
+    return;
+  }
+
+  const step = proc.steps[state.currentStep];
+  document.getElementById('dentistSpeech').textContent = step.speech;
+  state.stepStartTime = Date.now();
+
+  document.querySelectorAll('.tool-btn').forEach(b => {
+    b.classList.remove('highlight', 'correct-flash', 'wrong-flash');
+  });
+
+  const solved = Math.min(state.currentStep, proc.problems);
+  document.getElementById('problemsCount').textContent = `${solved}/${proc.problems} selesai`;
+}
+
+function handleToolClick(toolId) {
+  if (!state.currentProcedure) return;
+  const step = state.currentProcedure.steps[state.currentStep];
+  if (!step) return;
+
+  const btn = document.getElementById(`tool-${toolId}`);
+
+  if (toolId === step.tool) {
+    const timeTaken = (Date.now() - state.stepStartTime) / 1000;
+    let points = 10;
+    if (timeTaken < 2) points = 15;
+    else if (timeTaken < 4) points = 10;
+    else points = 5;
+
+    state.score += points;
+    state.correctCount++;
+    document.getElementById('displayScore').textContent = state.score;
+
+    btn.classList.add('correct-flash');
+    showFeedback('✓', 'correct');
+    showPoints(`+${points}`, btn);
+
+    state.currentStep++;
+    setTimeout(() => showStep(), 600);
+  } else {
+    state.wrongCount++;
+    state.mood = Math.max(0, state.mood - 10);
+    updateMoodDisplay();
+
+    btn.classList.add('wrong-flash');
+    showFeedback('✗', 'wrong');
+    showPoints('-10 mood', btn);
+
+    setTimeout(() => {
+      btn.classList.remove('wrong-flash');
+    }, 500);
+  }
+}
+
+function treatmentDone() {
+  const proc = state.currentProcedure;
+  document.getElementById('problemsCount').textContent = `${proc.problems}/${proc.problems} selesai`;
+  document.getElementById('dentistSpeech').textContent = 'Bagus! Rawatan selesai. Bersihkan dan panggil pesakit seterusnya.';
+
+  const activeTooth = document.getElementById(`tooth-${proc.toothNum}`);
+  if (activeTooth) {
+    activeTooth.classList.remove('active');
+    activeTooth.classList.add('treated');
+  }
+
+  stopTimer();
+
+  const patientTime = (Date.now() - state.patientStartTime) / 1000;
+  if (patientTime < state.fastestTime) state.fastestTime = patientTime;
+
+  const rank = RANKS[state.currentRank];
+  const moodBonus = Math.round(state.mood / 20);
+  const salary = rank.salary + moodBonus * 10;
+  state.salaryEarned += salary;
+  state.moodSum += state.mood;
+  state.patientsCompleted++;
+  state.patientIndex++;
+
+  document.getElementById('patientCounter').textContent = `${state.patientsCompleted}/${state.maxPatients}`;
+
+  document.getElementById('btnComplete').style.display = 'block';
+}
+
+function completePatient() {
+  document.getElementById('btnComplete').style.display = 'none';
+  document.getElementById('patientBar').style.display = 'none';
+  document.getElementById('moodArea').style.display = 'none';
+  document.getElementById('dentistArea').style.display = 'none';
+  document.getElementById('dentalView').style.display = 'none';
+  document.getElementById('toolTray').style.display = 'none';
+  document.getElementById('timerArea').style.display = 'none';
+
+  state.totalScore += state.score;
+  checkPromotion();
+
+  if (state.patientIndex >= state.procedures.length) {
+    setTimeout(endDay, 500);
+  } else {
+    document.getElementById('callArea').style.display = 'flex';
+  }
+}
+
+function startTimer() {
+  state.timerValue = 100;
+  const fill = document.getElementById('timerFill');
+  fill.style.width = '100%';
+  fill.className = 'timer-fill';
+
+  if (state.timerInterval) clearInterval(state.timerInterval);
+
+  state.timerInterval = setInterval(() => {
+    state.timerValue -= 0.5;
+    if (state.timerValue <= 0) {
+      state.timerValue = 0;
+      state.mood = Math.max(0, state.mood - 2);
+      updateMoodDisplay();
+    }
+
+    fill.style.width = state.timerValue + '%';
+    if (state.timerValue < 20) fill.className = 'timer-fill danger';
+    else if (state.timerValue < 50) fill.className = 'timer-fill warning';
+    else fill.className = 'timer-fill';
+  }, 200);
+}
+
+function stopTimer() {
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
+}
+
+function updateMoodDisplay() {
+  const fill = document.getElementById('moodFill');
+  const emoji = document.getElementById('moodEmoji');
+  fill.style.width = state.mood + '%';
+
+  if (state.mood >= 80) emoji.textContent = '😊';
+  else if (state.mood >= 60) emoji.textContent = '😐';
+  else if (state.mood >= 40) emoji.textContent = '😟';
+  else if (state.mood >= 20) emoji.textContent = '😠';
+  else emoji.textContent = '🤬';
+}
+
+function showFeedback(text, type) {
+  const el = document.createElement('div');
+  el.className = `feedback ${type}`;
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
+function showPoints(text, refEl) {
+  const el = document.createElement('div');
+  el.className = 'points-popup';
+  el.textContent = text;
+  el.style.color = text.startsWith('+') ? 'var(--green)' : 'var(--red)';
+
+  const rect = refEl.getBoundingClientRect();
+  el.style.left = rect.left + rect.width / 2 - 30 + 'px';
+  el.style.top = rect.top - 10 + 'px';
+
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+function checkPromotion() {
+  const nextRank = state.currentRank + 1;
+  if (nextRank < RANKS.length && state.totalScore >= RANKS[nextRank].minScore) {
+    state.currentRank = nextRank;
+    const rank = RANKS[nextRank];
+
+    document.getElementById('displayRank').textContent = rank.title;
+    document.getElementById('promoRank').textContent = rank.title;
+    document.getElementById('promoName').textContent = state.playerName;
+
+    const perksList = document.getElementById('promoPerks');
+    perksList.innerHTML = '';
+    rank.perks.forEach(p => {
+      const li = document.createElement('li');
+      li.textContent = p;
+      perksList.appendChild(li);
+    });
+
+    document.getElementById('promoModal').classList.add('active');
+  }
+}
+
+function closePromo() {
+  document.getElementById('promoModal').classList.remove('active');
+}
+
+function sharePromo() {
+  const rank = RANKS[state.currentRank];
+  const text = `🏅 SURAT KENAIKAN PANGKAT!\n\nTahniah, ${state.playerName} dinaikkan ke ${rank.title}!\n\n🦷 Dental Nurse Hero\n#DentalNurseHero #WiraJururawatPergigian`;
+  shareText(text);
+}
+
+function endDay() {
+  const totalAttempts = state.correctCount + state.wrongCount;
+  const accuracy = totalAttempts > 0 ? Math.round((state.correctCount / totalAttempts) * 100) : 0;
+  const avgMood = state.patientsCompleted > 0 ? Math.round(state.moodSum / state.patientsCompleted) : 0;
+
+  let stars = 1;
+  if (accuracy >= 90 && avgMood >= 70) stars = 3;
+  else if (accuracy >= 70 && avgMood >= 50) stars = 2;
+
+  document.getElementById('summaryStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+  document.getElementById('summaryScore').textContent = state.score;
+  document.getElementById('summarySalary').textContent = `+RM${state.salaryEarned.toLocaleString()}`;
+  document.getElementById('summaryPatients').textContent = state.patientsCompleted;
+  document.getElementById('summaryAccuracy').textContent = accuracy + '%';
+
+  if (state.fastestTime < Infinity) {
+    document.getElementById('summaryFastest').textContent = Math.round(state.fastestTime) + 's';
+  }
+
+  let moodEmoji = '😊', moodText = `Baik - ${avgMood}%`;
+  if (avgMood < 40) { moodEmoji = '😟'; moodText = `Kurang - ${avgMood}%`; }
+  else if (avgMood < 70) { moodEmoji = '😐'; moodText = `Okay - ${avgMood}%`; }
+
+  document.getElementById('summaryMoodEmoji').textContent = moodEmoji;
+  document.getElementById('summaryMoodText').textContent = moodText;
+
+  showScreen('summaryScreen');
+}
+
+function shareResult() {
+  const totalAttempts = state.correctCount + state.wrongCount;
+  const accuracy = totalAttempts > 0 ? Math.round((state.correctCount / totalAttempts) * 100) : 0;
+  const text = `🦷 Dental Nurse Hero\n\n⭐ ${state.score} Mata\n💰 Gaji: RM${state.salaryEarned}\n✅ Ketepatan: ${accuracy}%\n👥 ${state.patientsCompleted} pesakit dirawat\n🏅 ${RANKS[state.currentRank].title}\n\n#DentalNurseHero`;
+  shareText(text);
+}
+
+function shareText(text) {
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Disalin! Tampal di WhatsApp atau media sosial.');
+    });
+  } else {
+    prompt('Salin teks ini:', text);
+  }
+}
+
+function playAgain() {
+  state.score = 0;
+  showScreen('startScreen');
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+</script>
+</body>
+</html>
